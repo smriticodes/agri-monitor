@@ -1,26 +1,20 @@
 import { DashboardTemplate } from "@/components/templates/DashboardTemplate";
-import { getLatestCameraCapture } from "@/lib/services/camera-service";
-import { getMonitoringLog } from "@/lib/services/monitoring-service";
-import { getLatestPrediction } from "@/lib/services/prediction-service";
-import { listMeshNetworks, listTraySystems } from "@/lib/services/topology-service";
+import { getDashboardData } from "@/lib/services/dashboard-service";
 
 export default async function HomePage() {
-  const trays = await listTraySystems();
-  const selectedTrayId = trays[0]?.id;
-  const [latestImage, latestPrediction, monitoringLog, meshes] = await Promise.all([
-    getLatestCameraCapture(selectedTrayId),
-    getLatestPrediction(selectedTrayId),
-    getMonitoringLog(8, selectedTrayId),
-    listMeshNetworks()
-  ]);
+  const data = await getDashboardData();
 
   return (
     <DashboardTemplate
-      initialLatestImage={latestImage}
-      initialLatestPrediction={latestPrediction}
-      initialMonitoringLog={monitoringLog}
-      initialTrays={trays}
-      initialMeshes={meshes}
+      activeTab="overview"
+      initialLatestImage={data.latestImage}
+      initialLatestPrediction={data.latestPrediction}
+      initialMonitoringLog={data.monitoringLog}
+      initialTrays={data.trays}
+      initialMeshes={data.meshes}
+      initialPlants={data.plants}
+      initialReports={data.reports}
+      initialSchedules={data.schedules}
     />
   );
 }
