@@ -4,7 +4,7 @@ Full-stack **Next.js** monitoring UI for tray- and plant-level crop health: came
 
 ## Demo
 
-<video src="docs/demo/agri-monitor-demo.mov" controls width="720">
+<video src="docs/demo/agri-monitor-demo.mov" controls loop muted playsinline autoplay width="720">
   Your browser does not support the video tag. <a href="docs/demo/agri-monitor-demo.mov">Download the demo</a>.
 </video>
 
