@@ -2,6 +2,14 @@
 
 Full-stack **Next.js** monitoring UI for tray- and plant-level crop health: camera frames, CV-assisted counts and species ID, reports, meshes, and capture schedules. **PostgreSQL** is **required** for trays, plants, captures, and related APIs; **Qdrant** and remote CV URLs are optional extras.
 
+## Demo
+
+<video src="docs/demo/agri-monitor-demo.mov" controls width="720">
+  Your browser does not support the video tag. <a href="docs/demo/agri-monitor-demo.mov">Download the demo</a>.
+</video>
+
+[Download demo video](docs/demo/agri-monitor-demo.mov)
+
 ## Stack
 
 | Layer | Choice |
