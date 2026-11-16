@@ -8,7 +8,7 @@ flowchart LR
     U[User / grower]
   end
 
-  subgraph agrihome [AgriHome Vision Console]
+  subgraph agri-monitor [Agri Monitor Vision Console]
     UI[Next.js UI + REST + GraphQL]
   end
 

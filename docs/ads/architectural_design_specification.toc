@@ -139,7 +139,7 @@
 \contentsline {subsubsection}{\numberline {8.2.1}Assumptions}{38}{subsubsection.8.2.1}%
 \contentsline {subsubsection}{\numberline {8.2.2}Responsibilities}{38}{subsubsection.8.2.2}%
 \contentsline {subsubsection}{\numberline {8.2.3}Subsystem interfaces}{38}{subsubsection.8.2.3}%
-\contentsline {subsection}{\numberline {8.3}agrihome\_agent bridge subsystem}{38}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.3}agri\_monitor\_agent bridge subsystem}{38}{subsection.8.3}%
 \contentsline {subsubsection}{\numberline {8.3.1}Assumptions}{38}{subsubsection.8.3.1}%
 \contentsline {subsubsection}{\numberline {8.3.2}Responsibilities}{39}{subsubsection.8.3.2}%
 \contentsline {subsubsection}{\numberline {8.3.3}Subsystem interfaces}{39}{subsubsection.8.3.3}%

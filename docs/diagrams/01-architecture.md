@@ -1,6 +1,6 @@
 # Architecture diagram
 
-High-level view of the AgriHome Vision Console: Next.js full-stack app, service layer, PostgreSQL, and optional Qdrant / CV HTTP services.
+High-level view of the Agri Monitor Vision Console: Next.js full-stack app, service layer, PostgreSQL, and optional Qdrant / CV HTTP services.
 
 ```mermaid
 flowchart TB

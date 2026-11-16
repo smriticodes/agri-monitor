@@ -6,7 +6,7 @@ export type CaptureCropMode = "center" | "leaf" | "off";
 export type CaptureRotationDegrees = 0 | 90 | 180 | 270;
 
 /**
- * Parse DEVICE_CAPTURE_CROP / AGRIHOME_CAPTURE_CROP style values.
+ * Parse DEVICE_CAPTURE_CROP / AGRI_MONITOR_CAPTURE_CROP style values.
  * Accepts: center | leaf | off | 0.65 | center:0.65
  */
 export function parseCaptureCropMode(

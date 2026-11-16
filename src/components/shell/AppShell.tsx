@@ -286,7 +286,7 @@ export function AppShell({
                 <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z" />
               </svg>
             </div>
-            <p className="text-sm font-bold tracking-tight text-white">AgriHome</p>
+            <p className="text-sm font-bold tracking-tight text-white">Agri Monitor</p>
           </div>
           <nav className="mt-8 flex flex-col gap-1">
             {navItems.map((item) => {

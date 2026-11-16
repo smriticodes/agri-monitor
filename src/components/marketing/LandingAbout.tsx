@@ -87,7 +87,7 @@ export function LandingAbout({
         About
       </h2>
       <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink/55 sm:text-base">
-        AgriHome reads a leaf photo and names the crop plus common diseases.
+        Agri Monitor reads a leaf photo and names the crop plus common diseases.
         Tap a plant to see the {classCount} conditions we train on today —
         across PlantVillage, PlantDoc, and plant-leaf.
       </p>

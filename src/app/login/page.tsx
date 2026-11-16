@@ -29,7 +29,7 @@ export default async function LoginPage({
             href="/"
             className="text-sm font-bold tracking-tight text-ink transition-opacity hover:opacity-70"
           >
-            AgriHome
+            Agri Monitor
           </Link>
           <h1 className="mt-4 text-2xl font-bold tracking-tight text-ink sm:text-3xl">
             {initialMode === "register" ? "Create your account" : "Welcome back"}

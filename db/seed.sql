@@ -1,4 +1,4 @@
--- Initial data for AgriHome (run after schema.sql). Idempotent via ON CONFLICT.
+-- Initial data for Agri Monitor (run after schema.sql). Idempotent via ON CONFLICT.
 
 INSERT INTO tray_systems (
   id, owner_email, name, zone, crop, plant_count,

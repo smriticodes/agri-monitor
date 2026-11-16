@@ -91,8 +91,8 @@ export default async function DevicesPage() {
           <p className="text-sm font-medium text-ink">No devices yet</p>
           <p className="text-sm text-ink/65">
             On your Pi, clone{" "}
-            <span className="font-medium text-ink">Agri-Home/klipper</span> (includes
-            the agrihome agent), then run register-once with your provisioning
+            <span className="font-medium text-ink">agri-monitor/klipper</span> (includes
+            the agri-monitor agent), then run register-once with your provisioning
             secret. A tray is created automatically on first registration.
           </p>
           <p className="text-xs text-ink/45">

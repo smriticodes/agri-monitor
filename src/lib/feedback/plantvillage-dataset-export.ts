@@ -18,10 +18,10 @@ import path from "path";
  *
  * Class folder names should match PlantVillage convention `Crop___Condition` (e.g.
  * `Tomato___Early_blight`). Use `PLANTVILLAGE_FEEDBACK_FOLDER_MAP` to map UI strings
- * to those names. Unmapped labels become `Agrihome___...` folders; to fold those into
+ * to those names. Unmapped labels become `Agri Monitor___...` folders; to fold those into
  * canonical classes when training alongside the main dataset, use
- * `python train.py --data-dir .../raw/color --extra-dataset agrihome=<this root>` and
- * add an `agrihome` entry in `cv-backend/dataset_label_map.json` (same idea as
+ * `python train.py --data-dir .../raw/color --extra-dataset agri-monitor=<this root>` and
+ * add an `agri-monitor` entry in `cv-backend/dataset_label_map.json` (same idea as
  * `plantdoc` / `plant_leaf` in that file).
  */
 
@@ -83,7 +83,7 @@ function sanitizeClassFolderName(name: string): string {
   }
   const one = folderSegment(t);
   const out = one.slice(0, 120);
-  return out || "Agrihome___unlabeled";
+  return out || "Agri Monitor___unlabeled";
 }
 
 function slugToken(s: string): string {
@@ -122,21 +122,21 @@ export function resolvePlantVillageClassFolderName(
     return sanitizeClassFolderName(map[cat]!);
   }
   if (cat) {
-    return sanitizeClassFolderName(`Agrihome___${slugToken(cat) || "unlabeled"}`);
+    return sanitizeClassFolderName(`Agri Monitor___${slugToken(cat) || "unlabeled"}`);
   }
   const t0 = feedbackTags[0]?.trim() ?? "";
   if (t0 && map[t0]) {
     return sanitizeClassFolderName(map[t0]!);
   }
   if (t0) {
-    return sanitizeClassFolderName(`Agrihome___${slugToken(t0) || "unlabeled"}`);
+    return sanitizeClassFolderName(`Agri Monitor___${slugToken(t0) || "unlabeled"}`);
   }
   if (crop) {
     return sanitizeClassFolderName(
-      `Agrihome___${slugToken(crop) || "unlabeled"}`
+      `Agri Monitor___${slugToken(crop) || "unlabeled"}`
     );
   }
-  return "Agrihome___unlabeled";
+  return "Agri Monitor___unlabeled";
 }
 
 export function getPlantVillageFeedbackDatasetRootFromEnv(): string | null {

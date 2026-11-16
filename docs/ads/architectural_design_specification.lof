@@ -1,4 +1,4 @@
-\contentsline {figure}{\numberline {1}{\ignorespaces AgriHome Vision Console: five-layer architecture with Pi/Klipper edge trust boundaries.}}{13}{figure.1}%
+\contentsline {figure}{\numberline {1}{\ignorespaces Agri Monitor Vision Console: five-layer architecture with Pi/Klipper edge trust boundaries.}}{13}{figure.1}%
 \contentsline {figure}{\numberline {2}{\ignorespaces Subsystem definitions and primary data flow (edge hardware talks to the application layer; application also reads/writes the data layer directly for most CRUD paths).}}{15}{figure.2}%
 \contentsline {figure}{\numberline {3}{\ignorespaces Write coordination subsystem: accepts write intents and forwards them toward integrity checks.}}{17}{figure.3}%
 \contentsline {figure}{\numberline {4}{\ignorespaces Integrity subsystem: validates operations before execution.}}{17}{figure.4}%
@@ -27,6 +27,6 @@
 \contentsline {figure}{\numberline {27}{\ignorespaces Normalization: single canonical shape for downstream persistence.}}{34}{figure.27}%
 \contentsline {figure}{\numberline {28}{\ignorespaces Edge disease hook: optional classification after Pi capture.}}{35}{figure.28}%
 \contentsline {figure}{\numberline {29}{\ignorespaces Capture schedule runner: enqueues edge capture work for agents.}}{35}{figure.29}%
-\contentsline {figure}{\numberline {30}{\ignorespaces Pi edge host: register and heartbeat against AgriHome.}}{37}{figure.30}%
+\contentsline {figure}{\numberline {30}{\ignorespaces Pi edge host: register and heartbeat against Agri Monitor.}}{37}{figure.30}%
 \contentsline {figure}{\numberline {31}{\ignorespaces Primary fswebcam capture on the agent; optional server-side HTTP streamer still.}}{38}{figure.31}%
-\contentsline {figure}{\numberline {32}{\ignorespaces Edge agent bridges Klipper/fswebcam local capture to AgriHome APIs.}}{38}{figure.32}%
+\contentsline {figure}{\numberline {32}{\ignorespaces Edge agent bridges Klipper/fswebcam local capture to Agri Monitor APIs.}}{38}{figure.32}%

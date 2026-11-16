@@ -115,7 +115,7 @@ const firebaseClientConfig: FirebaseClientConfig = {
 };
 
 export const env = {
-  appName: process.env.APP_NAME ?? "AgriHome Vision Console",
+  appName: process.env.APP_NAME ?? "Agri Monitor Vision Console",
   isProduction: process.env.NODE_ENV === "production",
   apiBaseUrl:
     process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3000",
@@ -140,7 +140,7 @@ export const env = {
   qdrant: {
     url: process.env.QDRANT_URL ?? "",
     apiKey: process.env.QDRANT_API_KEY ?? "",
-    collection: process.env.QDRANT_COLLECTION ?? "agrihome-image-embeddings",
+    collection: process.env.QDRANT_COLLECTION ?? "agri-monitor-image-embeddings",
     timeoutMs: parseNumber(process.env.QDRANT_TIMEOUT_MS, 0)
   },
   /** Optional HTTP endpoints for CV (see docs/CV_PIPELINE.md). */
@@ -157,7 +157,7 @@ export const env = {
     ...firebaseClientConfig,
     client: firebaseClientConfig,
     sessionCookieName:
-      process.env.FIREBASE_SESSION_COOKIE_NAME ?? "agrihome_session",
+      process.env.FIREBASE_SESSION_COOKIE_NAME ?? "agri_monitor_session",
     admin: {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL ?? "",
       privateKey: normalizeMultilineSecret(process.env.FIREBASE_PRIVATE_KEY),
@@ -200,7 +200,7 @@ export const env = {
     ),
     /** Relative path or absolute URL for optional HTTP still frames (streamer). */
     snapshotPath:
-      process.env.AGRIHOME_SNAPSHOT_PATH?.trim() ||
+      process.env.AGRI_MONITOR_SNAPSHOT_PATH?.trim() ||
       process.env.DEVICE_SNAPSHOT_PATH?.trim() ||
       "/webcam/?action=snapshot",
     /** Server-side optional streamer fetch timeout (Take Picture fast path). */
@@ -215,7 +215,7 @@ export const env = {
      */
     captureRotation: parseCaptureRotation(
       process.env.DEVICE_CAPTURE_ROTATION ??
-        process.env.AGRIHOME_CAPTURE_ROTATION,
+        process.env.AGRI_MONITOR_CAPTURE_ROTATION,
       180
     ),
     /**
@@ -223,13 +223,13 @@ export const env = {
      * Camserver /photo already crops; ingest skips when pre-framed.
      */
     captureCrop: parseCaptureCropMode(
-      process.env.DEVICE_CAPTURE_CROP ?? process.env.AGRIHOME_CAPTURE_CROP,
+      process.env.DEVICE_CAPTURE_CROP ?? process.env.AGRI_MONITOR_CAPTURE_CROP,
       "center"
     ),
     captureCropFraction: parseCaptureCropFraction(
       process.env.DEVICE_CAPTURE_CROP_FRACTION ??
-        process.env.AGRIHOME_CAPTURE_CROP_FRACTION,
-      process.env.DEVICE_CAPTURE_CROP ?? process.env.AGRIHOME_CAPTURE_CROP,
+        process.env.AGRI_MONITOR_CAPTURE_CROP_FRACTION,
+      process.env.DEVICE_CAPTURE_CROP ?? process.env.AGRI_MONITOR_CAPTURE_CROP,
       0.6
     )
   }

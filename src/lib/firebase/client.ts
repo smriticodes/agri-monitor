@@ -5,7 +5,7 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 import type { FirebaseClientConfig } from "@/lib/types/auth";
 
-const CLIENT_APP_NAME = "agrihome-web";
+const CLIENT_APP_NAME = "agri-monitor-web";
 
 export const hasFirebaseClientConfig = (config: FirebaseClientConfig) =>
   Boolean(

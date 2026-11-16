@@ -17,7 +17,7 @@ import { getParticipateMlFeedback } from "@/lib/services/user-preferences-servic
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const SERVICE_HEADER = "x-agrihome-feedback-key";
+const SERVICE_HEADER = "x-agri-monitor-feedback-key";
 
 const MAX_IMAGE_BYTES = Number(
   process.env.FEEDBACK_MAX_IMAGE_BYTES ?? 8 * 1024 * 1024

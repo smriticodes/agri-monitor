@@ -4,7 +4,7 @@ import { env, hasVectorConfig } from "@/lib/config/env";
 import type { CameraCapture, SimilarImageMatch } from "@/lib/types/domain";
 
 declare global {
-  var __agrihomeQdrantClient__:
+  var __agri-monitorQdrantClient__:
     | QdrantClient
     | null
     | undefined;
@@ -25,15 +25,15 @@ const getQdrantClient = () => {
     return null;
   }
 
-  if (!globalThis.__agrihomeQdrantClient__) {
-    globalThis.__agrihomeQdrantClient__ = new QdrantClient({
+  if (!globalThis.__agri-monitorQdrantClient__) {
+    globalThis.__agri-monitorQdrantClient__ = new QdrantClient({
       url: env.qdrant.url,
       apiKey: env.qdrant.apiKey || undefined,
       ...(env.qdrant.timeoutMs > 0 ? { timeout: env.qdrant.timeoutMs } : {})
     });
   }
 
-  return globalThis.__agrihomeQdrantClient__;
+  return globalThis.__agri-monitorQdrantClient__;
 };
 
 export const getVectorSource = () => (getQdrantClient() ? "qdrant" : "unavailable");

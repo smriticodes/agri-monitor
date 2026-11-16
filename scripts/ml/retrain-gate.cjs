@@ -150,7 +150,7 @@ async function main() {
       console.error("Retrain webhook failed:", e.message);
       try {
         await slackNotify(
-          `:x: Retrain webhook failed for AgriHome (${e.message})`
+          `:x: Retrain webhook failed for Agri Monitor (${e.message})`
         );
       } catch (_) {}
       process.exit(1);
@@ -159,7 +159,7 @@ async function main() {
 
   try {
     await slackNotify(
-      `:rocket: AgriHome ML: pending feedback *${pending}* reached threshold *${threshold}*. ${webhook ? "Webhook fired." : "Set RETRAIN_WEBHOOK_URL to trigger training."}`
+      `:rocket: Agri Monitor ML: pending feedback *${pending}* reached threshold *${threshold}*. ${webhook ? "Webhook fired." : "Set RETRAIN_WEBHOOK_URL to trigger training."}`
     );
   } catch (e) {
     console.error("Slack notify failed:", e.message);

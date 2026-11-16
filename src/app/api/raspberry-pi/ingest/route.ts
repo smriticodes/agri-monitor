@@ -51,7 +51,7 @@ function parseOptionalNumber(value: FormDataEntryValue | null): number | undefin
 /**
  * POST /api/raspberry-pi/ingest
  * Multipart image ingest for Klipper / Pi agents.
- * Auth: X-Agrihome-Device-Key (not Firebase session).
+ * Auth: X-Agri Monitor-Device-Key (not Firebase session).
  *
  * Fields:
  *   image (file, required) — JPEG/PNG/WebP

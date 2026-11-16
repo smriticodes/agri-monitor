@@ -1,4 +1,4 @@
-The Application Layer implements the \textbf{control plane} of AgriHome: every client request is authenticated, validated, mapped to domain operations, and translated into data-layer and optional processing-layer calls. Device-key traffic from Raspberry~Pi agents shares the same layer through dedicated \texttt{/api/raspberry-pi/*} routes. The subsystems below follow the decomposition style of the reference architectural document while reflecting AgriHome's agronomic and edge-capture domain.
+The Application Layer implements the \textbf{control plane} of Agri Monitor: every client request is authenticated, validated, mapped to domain operations, and translated into data-layer and optional processing-layer calls. Device-key traffic from Raspberry~Pi agents shares the same layer through dedicated \texttt{/api/raspberry-pi/*} routes. The subsystems below follow the decomposition style of the reference architectural document while reflecting Agri Monitor's agronomic and edge-capture domain.
 
 \subsection{API entry and routing subsystem}
 
@@ -135,7 +135,7 @@ A-V1 & Session broker $\rightarrow$ Validator & Parsed body & Validated DTO \\
 
 \subsection{Domain orchestration subsystem}
 
-\textbf{Domain orchestration} implements AgriHome use cases: tray and plant CRUD, mesh membership, schedule upserts, monitoring log writes, prediction snapshots, file handoffs, edge device lifecycle, and Take Picture coordination (queued agent \texttt{fswebcam} capture or optional HTTP streamer still). It is the primary caller of the Data Layer and the orchestrator of Processing Layer calls.
+\textbf{Domain orchestration} implements Agri Monitor use cases: tray and plant CRUD, mesh membership, schedule upserts, monitoring log writes, prediction snapshots, file handoffs, edge device lifecycle, and Take Picture coordination (queued agent \texttt{fswebcam} capture or optional HTTP streamer still). It is the primary caller of the Data Layer and the orchestrator of Processing Layer calls.
 
 \begin{figure}[H]
 \centering
@@ -269,12 +269,12 @@ A-E2 & Response handler $\rightarrow$ Presentation & HTTP response & Rendered UX
 
 \subsection{Raspberry Pi edge API subsystem}
 
-The \textbf{Raspberry~Pi edge API} (\texttt{/api/raspberry-pi/*}) is the device-facing control and ingest surface. Agents present a provisioning code at register time and thereafter a device API key (\texttt{X-Agrihome-Device-Key}). Routes cover register, heartbeat (claim pending commands), multipart ingest, command listing, active poses, and capture-plan (schedules + poses + limits).
+The \textbf{Raspberry~Pi edge API} (\texttt{/api/raspberry-pi/*}) is the device-facing control and ingest surface. Agents present a provisioning code at register time and thereafter a device API key (\texttt{X-Agri Monitor-Device-Key}). Routes cover register, heartbeat (claim pending commands), multipart ingest, command listing, active poses, and capture-plan (schedules + poses + limits).
 
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[font=\scriptsize, box/.style={draw, rounded corners, align=center, minimum width=2.3cm, minimum height=0.7cm}, arr/.style={-{Stealth}, thick}]
-\node[box, fill=teal!12] (agent) {agrihome\_agent};
+\node[box, fill=teal!12] (agent) {agri\_monitor\_agent};
 \node[box, right=1.0cm of agent, fill=blue!10] (rpi) {/api/raspberry-pi/*};
 \node[box, right=1.0cm of rpi, fill=gray!14] (data) {Data Layer};
 \draw[arr] (agent) -- (rpi);

@@ -1,4 +1,4 @@
--- App-owned display name shown in AgriHome settings/header.
+-- App-owned display name shown in Agri Monitor settings/header.
 -- Idempotent.
 
 ALTER TABLE user_preferences

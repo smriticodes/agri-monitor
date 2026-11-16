@@ -1552,7 +1552,7 @@ export function TrayEdgeDevicePanel({
           <h2 className="text-base font-semibold text-ink">Raspberry Pi</h2>
           <p className="mt-1 text-sm text-ink/55">
             No edge device is linked to this tray yet. Power on a Klipper Pi
-            with the AgriHome agent, or link an existing device below.
+            with the Agri Monitor agent, or link an existing device below.
           </p>
         </div>
         {allDevices.length > 0 ? (
@@ -1700,7 +1700,7 @@ export function TrayEdgeDevicePanel({
             <span className="font-mono">camera_server.py</span> (e.g.{" "}
             <span className="font-mono">http://192.168.1.154:5000</span>).
             Vision Console queues servo / LED / photo to the edge agent, which
-            calls this URL on the LAN — agrihome.tech cannot reach it directly.
+            calls this URL on the LAN — agri-monitor.tech cannot reach it directly.
           </p>
         </div>
         <div className="flex flex-wrap items-end gap-2">
@@ -2226,7 +2226,7 @@ export function TrayEdgeDevicePanel({
 
       {device.status === "offline" && !device.revokedAt && (
         <p className="text-sm text-amber-800">
-          Device looks offline (no recent heartbeat). Ensure the AgriHome agent
+          Device looks offline (no recent heartbeat). Ensure the Agri Monitor agent
           is running on the Pi before scanning.
         </p>
       )}

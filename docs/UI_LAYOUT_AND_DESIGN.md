@@ -1,4 +1,4 @@
-# AgriHome UI layout and design principles
+# Agri Monitor UI layout and design principles
 
 This document describes the current application shell, page structure, visual language, and the reasoning encoded in the codebase. It reflects the Next.js App Router UI under `src/app` and shared components under `src/components`.
 
@@ -17,7 +17,7 @@ The shell is responsible for navigation, width constraints, and ambient backgrou
 |--------|----------|
 | **Page background** | Full-height column on `bg-canvas`. A fixed, non-interactive layer (`pointer-events-none`, `z-[-10]`) holds large blurred blobs: lime, leaf, and ember tints for depth without clutter. |
 | **Content column** | `max-w-lg` on small screens, expanding to `lg:max-w-6xl` with a **sidebar + main** split from `lg` breakpoint upward. |
-| **Desktop sidebar** | Hidden below `lg`. Fixed width `w-56`, vertical gradient `ink → moss → dark green`. Brand row: **lime** app icon tile + **AgriHome** wordmark. Nav lists the same five routes as mobile with **inline SVG icons**; **lime pill** + shadow for the active row, muted white/70 with hover wash for inactive. |
+| **Desktop sidebar** | Hidden below `lg`. Fixed width `w-56`, vertical gradient `ink → moss → dark green`. Brand row: **lime** app icon tile + **Agri Monitor** wordmark. Nav lists the same five routes as mobile with **inline SVG icons**; **lime pill** + shadow for the active row, muted white/70 with hover wash for inactive. |
 | **Main** | `flex-1` scroll area with horizontal padding (`px-4` → `lg:px-8`), top padding with **`safe-top`**, and **extra bottom padding on mobile** (`pb-28`) so content clears the elevated bottom bar and FAB. |
 | **Mobile bottom nav** | Fixed bar (`z-30`) with `safe-bottom`, frosted surface (`bg-white/92`, `backdrop-blur-2xl`), subtle top border and dock shadow. Each item is **icon + label** (`text-[10px]`). **Active** routes use **leaf** text and a **lime-tinted rounded icon well**; inactive items are `text-ink/40` with a light hover wash. **Add Plant** is a **FAB**: raised `-mt-6` circular-tile button (`shadow-fab` from Tailwind), **leaf** or **leaf→moss** gradient, plus label beneath. |
 

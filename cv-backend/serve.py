@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-FastAPI server: PlantVillage-trained classifier for AgriHome CV_SPECIES_INFERENCE_URL.
+FastAPI server: PlantVillage-trained classifier for Agri Monitor CV_SPECIES_INFERENCE_URL.
 
   export USE_CLAHE=1   # optional LAB CLAHE via OpenCV before torch preprocess
   python serve.py --checkpoint ./artifacts/best.pt --classes ./artifacts/classes.json --port 8765
 
-AgriHome .env:
+Agri Monitor .env:
   CV_SPECIES_INFERENCE_URL=http://192.168.0.142:8765/v1/classify
 """
 
@@ -27,7 +27,7 @@ from pydantic import BaseModel
 from PIL import Image
 from torchvision import models, transforms
 
-app = FastAPI(title="AgriHome PlantVillage CV", version="1.0.0")
+app = FastAPI(title="Agri Monitor PlantVillage CV", version="1.0.0")
 
 # If train used PlantVillage **raw/** as ImageFolder root, class names are these splits — wrong.
 _PLANTVILLAGE_SPLIT_FOLDERS = frozenset({"color", "grayscale", "segmented"})

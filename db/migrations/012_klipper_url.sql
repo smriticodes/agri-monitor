@@ -1,4 +1,4 @@
--- Rename Moonraker-oriented device URL to Klipper (Agri-Home/klipper + fswebcam agent).
+-- Rename Moonraker-oriented device URL to Klipper (agri-monitor/klipper + fswebcam agent).
 -- Optional HTTP base remains for server-side Take Picture when a streamer is exposed;
 -- primary capture path is the Pi agent (camera-macros/save_image.sh).
 -- Idempotent: fresh installs that already have klipper_url (schema.sql) are no-ops.

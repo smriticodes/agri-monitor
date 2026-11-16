@@ -20,7 +20,7 @@ Short narratives in classic **“As a … I want … So that …”** form. They
 
 8. **As a** grower, **I want** to **add a plant from a leaf photo** after choosing a tray, with the app calling a trained classifier for crop and condition **so that** new plants are identified consistently with the same model the team trained and deployed.
 
-9. **As a** ML engineer, **I want** to train a **PlantVillage-style** multi-class model in `cv-backend` (with optional extra datasets), export `best.pt` and `classes.json`, and serve **`POST /v1/classify`** with a documented JSON contract **so that** AgriHome can point `CV_SPECIES_INFERENCE_URL` at a known, reproducible service.
+9. **As a** ML engineer, **I want** to train a **PlantVillage-style** multi-class model in `cv-backend` (with optional extra datasets), export `best.pt` and `classes.json`, and serve **`POST /v1/classify`** with a documented JSON contract **so that** Agri Monitor can point `CV_SPECIES_INFERENCE_URL` at a known, reproducible service.
 
 10. **As a** ML engineer, **I want** optional **Docker GPU** workflows (trainer idle container + classifier serving) documented and composable **so that** training and inference can run on a workstation or NAS without ad-hoc environment drift.
 

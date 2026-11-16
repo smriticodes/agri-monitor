@@ -1,5 +1,5 @@
 /**
- * Leaf classifier labels AgriHome trains from the combined leaf datasets:
+ * Leaf classifier labels Agri Monitor trains from the combined leaf datasets:
  *
  *   plantvillage/raw/color  — PlantVillage (38 Crop___Condition folders)
  *   plantdoc/               — PlantDoc (mapped → PlantVillage labels)

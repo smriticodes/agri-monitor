@@ -436,7 +436,7 @@ export function ScheduleClient({
       <p className="text-xs text-ink/40">
         Edge schedules need the capture schedule runner on the host, e.g.{" "}
         <span className="font-mono">
-          * * * * * cd /path/to/agrihome && npm run capture:schedule-runner
+          * * * * * cd /path/to/agri-monitor && npm run capture:schedule-runner
         </span>
         . See docs/ops/RASPBERRY_PI_KLIPPER.md.
       </p>

@@ -26,7 +26,7 @@ export interface TraySystem {
   name: string;
   zone: string;
   crop: string;
-  /** Plants recorded in AgriHome (manual + API). */
+  /** Plants recorded in Agri Monitor (manual + API). */
   plantCount: number;
   /** Last CV plant-instance count from a tray photo (may differ from plantCount). */
   visionPlantCount: number | null;

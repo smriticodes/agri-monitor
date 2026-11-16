@@ -1,7 +1,7 @@
-# Raspberry Pi + Klipper ↔ AgriHome
+# Raspberry Pi + Klipper ↔ Agri Monitor
 
 Connect bench Raspberry Pi devices running
-[Agri-Home/klipper](https://github.com/Agri-Home/klipper) to AgriHome for
+[agri-monitor/klipper](https://github.com/agri-monitor/klipper) to Agri Monitor for
 auto-provisioning, secure image ingest, and Take Picture / scheduled capture.
 
 **Capture path:** the Pi agent grabs frames with **fswebcam** via
@@ -9,14 +9,14 @@ auto-provisioning, secure image ingest, and Take Picture / scheduled capture.
 Optional HTTP streamer URLs remain supported for a server-side Take Picture
 fast path when a LAN still endpoint exists.
 
-The reference agent lives in the same repo under `agrihome_agent/`
-([Agri-Home/klipper](https://github.com/Agri-Home/klipper) branch
-`feature/agrihome-agent`). Clone **klipper only** — you do not need Moonraker
+The reference agent lives in the same repo under `agri_monitor_agent/`
+([agri-monitor/klipper](https://github.com/agri-monitor/klipper) branch
+`feature/agri-monitor-agent`). Clone **klipper only** — you do not need Moonraker
 to register or run the agent.
 
 ## What “connected” means
 
-1. **Register** — Pi sends CPU serial (+ MAC / hostname); AgriHome creates an
+1. **Register** — Pi sends CPU serial (+ MAC / hostname); Agri Monitor creates an
    `edge_devices` row, hashed API key, and a linked tray.
 2. **Heartbeat** — agent reports online; Vision Console shows status and claims
    pending commands.
@@ -25,12 +25,12 @@ to register or run the agent.
    `camera_server_url` is set and reachable. If that fails (or no URL is set),
    it queues `capture_now` for the Klipper Pi agent (`save_image.sh` /
    fswebcam). It does **not** pull Moonraker webcam snapshots for Take Picture.
-   On agent ingest, AgriHome stores hinge/motor pose and upserts the plant's
+   On agent ingest, Agri Monitor stores hinge/motor pose and upserts the plant's
    pose sequence entry.
 4. **Get position** — Vision Console queues `get_position`; the agent queries
    local Moonraker (`http://127.0.0.1:7125` by default, or
-   `AGRIHOME_MOONRAKER_URL`) and maps **`toolhead.position`** axes (default
-   X/Y via `AGRIHOME_POSITION_AXES=x,y`) to `{ hingeDeg, motorMm }`
+   `AGRI_MONITOR_MOONRAKER_URL`) and maps **`toolhead.position`** axes (default
+   X/Y via `AGRI_MONITOR_POSITION_AXES=x,y`) to `{ hingeDeg, motorMm }`
    (fallbacks: `gcode_move.gcode_position` / `position`, then optional
    `manual_stepper`). Moves must use single-letter G-code (`G0 X=… Y=…`);
    `G0 HINGE=/MOTOR=` does not update toolhead X/Y. With a plant selected,
@@ -44,13 +44,13 @@ to register or run the agent.
    capture → ingest per plant). Disease runs via `DEVICE_AUTO_DISEASE_ON_INGEST`
    after each ingest. **Home axes once** before the first live run if Klipper
    says axes are unhomed; the walk does not re-home mid-run. Set
-   `AGRIHOME_ACTUATOR_DRY_RUN=0` on the Pi for real `G0 X/Y` motion.
+   `AGRI_MONITOR_ACTUATOR_DRY_RUN=0` on the Pi for real `G0 X/Y` motion.
 
 ```mermaid
 sequenceDiagram
   participant UI as Vision Console
-  participant AH as AgriHome API
-  participant Agent as agrihome_agent
+  participant AH as Agri Monitor API
+  participant Agent as agri_monitor_agent
   participant Cam as fswebcam / save_image.sh
   participant K as Klipper (axes)
 
@@ -76,7 +76,7 @@ sequenceDiagram
   Agent->>AH: complete command with hingeDeg/motorMm
 ```
 
-## AgriHome setup
+## Agri Monitor setup
 
 ```bash
 # .env
@@ -87,7 +87,7 @@ DEVICE_AUTO_VISION_ON_INGEST=false
 DEVICE_AUTO_DISEASE_ON_INGEST=true
 DEVICE_HEARTBEAT_STALE_MINUTES=5
 # Optional server-side HTTP still (only if you expose a streamer on the LAN)
-# AGRIHOME_SNAPSHOT_PATH=/webcam/?action=snapshot
+# AGRI_MONITOR_SNAPSHOT_PATH=/webcam/?action=snapshot
 # DEVICE_SNAPSHOT_TIMEOUT_MS=8000
 
 npm run db:migrate   # includes 012_klipper_url (moonraker_url → klipper_url)
@@ -107,47 +107,47 @@ On the Pi (with Klipper + `fswebcam` installed):
 
 ```bash
 cd /home/pi
-git clone git@github.com:Agri-Home/klipper.git
+git clone git@github.com:agri-monitor/klipper.git
 cd klipper
-git checkout feature/agrihome-agent   # until merged to master
+git checkout feature/agri-monitor-agent   # until merged to master
 sudo apt-get install -y fswebcam
 
 export PYTHONPATH=/home/pi/klipper:$PYTHONPATH
-export AGRIHOME_URL=https://agrihome.example.com   # or http://LAN_IP:3000
+export AGRI_MONITOR_URL=https://agri-monitor.example.com   # or http://LAN_IP:3000
 export DEVICE_PROVISIONING_SECRET='same-as-server'
-export AGRIHOME_OWNER_EMAIL=you@example.com
-export AGRIHOME_SNAPSHOT_CMD=/home/pi/klipper/camera-macros/save_image.sh
+export AGRI_MONITOR_OWNER_EMAIL=you@example.com
+export AGRI_MONITOR_SNAPSHOT_CMD=/home/pi/klipper/camera-macros/save_image.sh
 # Optional: LAN HTTP streamer base for server-side Take Picture
 # (Vision Console "Streamer URL" — webcam stills, NOT Moonraker)
 # export KLIPPER_URL=http://192.168.1.50:8080
 # Moonraker on the Pi (Get position / G-code). Default if unset:
-# export AGRIHOME_MOONRAKER_URL=http://127.0.0.1:7125
+# export AGRI_MONITOR_MOONRAKER_URL=http://127.0.0.1:7125
 
-python3 -m agrihome_agent register
-python3 -m agrihome_agent run
+python3 -m agri_monitor_agent register
+python3 -m agri_monitor_agent run
 ```
 
-Credentials land in `~/.config/agrihome/agent.json` (mode 600). The plaintext
+Credentials land in `~/.config/agri-monitor/agent.json` (mode 600). The plaintext
 API key is shown only there after registration.
 
 Enable as a service (optional):
 
 ```bash
-sudo cp /home/pi/klipper/agrihome_agent/systemd/agrihome-agent.service \
+sudo cp /home/pi/klipper/agri_monitor_agent/systemd/agri-monitor-agent.service \
   /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable --now agrihome-agent.service
+sudo systemctl enable --now agri-monitor-agent.service
 ```
 
 Re-provision (rotate key, same CPU serial):
 
 ```bash
-python3 -m agrihome_agent register --re-provision
+python3 -m agri_monitor_agent register --re-provision
 ```
 
 ## Pi Zero wireless camera (`camera_server.py`)
 
-A companion **Pi Zero** can run Flask `camera_server.py` from Agri-Home/klipper
+A companion **Pi Zero** can run Flask `camera_server.py` from agri-monitor/klipper
 (`host 0.0.0.0`, **port 5000**) for wireless servo / LED / photo control:
 
 | Endpoint | Purpose |
@@ -157,7 +157,7 @@ A companion **Pi Zero** can run Flask `camera_server.py` from Agri-Home/klipper
 | `GET /photo` | `rpicam-still` JPEG |
 
 On the Vision Console tray panel, set **Camera server URL** to the Pi0 LAN (or
-tunnel) base, e.g. `http://192.168.1.60:5000`. The AgriHome server must be able
+tunnel) base, e.g. `http://192.168.1.60:5000`. The Agri Monitor server must be able
 to reach that host. Then use **Move servo**, **Set LED**, and **Take Pi0 photo**
 (server pulls `/photo` and ingests like other hardware captures).
 
@@ -166,7 +166,7 @@ Requires DB migration `013_camera_server_url` (`npm run db:migrate`).
 ### Option B — raw HTTP register
 
 ```bash
-curl -sS -X POST "$AGRIHOME_URL/api/raspberry-pi/register" \
+curl -sS -X POST "$AGRI_MONITOR_URL/api/raspberry-pi/register" \
   -H 'Content-Type: application/json' \
   -d '{
     "cpuSerial": "'"$(awk -F: '/^Serial/{print $2}' /proc/cpuinfo | tr -d " ")"'",
@@ -192,7 +192,7 @@ Response (store `apiKey` once):
 }
 ```
 
-Subsequent agent calls use header **`X-Agrihome-Device-Key: <apiKey>`**.
+Subsequent agent calls use header **`X-Agri Monitor-Device-Key: <apiKey>`**.
 
 | Method | Path | Purpose |
 | --- | --- | --- |
@@ -210,41 +210,41 @@ Register / heartbeat accept deprecated `moonrakerUrl` as an alias for
 ## Capture on the Pi (fswebcam)
 
 `camera-macros/save_image.sh` **requires** an output path. It saves the JPEG on
-the Pi and, by default, uploads to AgriHome ingest (disease detection runs on
+the Pi and, by default, uploads to Agri Monitor ingest (disease detection runs on
 the server when `DEVICE_AUTO_DISEASE_ON_INGEST` is enabled — default true).
 
 ```bash
 # Smoke test capture only
-/home/pi/klipper/camera-macros/save_image.sh /tmp/agrihome-test.jpg --no-upload
-file /tmp/agrihome-test.jpg   # JPEG image data
+/home/pi/klipper/camera-macros/save_image.sh /tmp/agri-monitor-test.jpg --no-upload
+file /tmp/agri-monitor-test.jpg   # JPEG image data
 
-# Capture → save on Pi → upload → disease detection on AgriHome
+# Capture → save on Pi → upload → disease detection on Agri Monitor
 export PYTHONPATH=/home/pi/klipper:$PYTHONPATH
-/home/pi/klipper/camera-macros/save_image.sh /home/pi/agrihome/captures/leaf.jpg
+/home/pi/klipper/camera-macros/save_image.sh /home/pi/agri-monitor/captures/leaf.jpg
 # or:
-python3 -m agrihome_agent capture /home/pi/agrihome/captures/leaf.jpg
+python3 -m agri_monitor_agent capture /home/pi/agri-monitor/captures/leaf.jpg
 ```
 
 Agent env:
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `AGRIHOME_URL` | — | AgriHome base URL |
+| `AGRI_MONITOR_URL` | — | Agri Monitor base URL |
 | `DEVICE_PROVISIONING_SECRET` | — | Must match server |
-| `AGRIHOME_OWNER_EMAIL` | — | Tray owner if server has no default |
+| `AGRI_MONITOR_OWNER_EMAIL` | — | Tray owner if server has no default |
 | `KLIPPER_URL` | — | Optional LAN HTTP streamer stored as `klipper_url` (not Moonraker) |
-| `AGRIHOME_MOONRAKER_URL` | `http://127.0.0.1:7125` | Moonraker control API for Get position / G-code |
-| `AGRIHOME_POSITION_AXES` | `x,y` | Hinge/motor axis letters or indices in `toolhead.position` |
-| `AGRIHOME_SNAPSHOT_CMD` | — | Path to `save_image.sh` (preferred) |
-| `AGRIHOME_SNAPSHOT_PATH` | — | Fallback HTTP still path/URL |
-| `AGRIHOME_HEARTBEAT_SECONDS` | `5` | Poll / claim interval |
-| `AGRIHOME_ACTUATOR_DRY_RUN` | `1` | Skip real G-code until macros ready |
-| `AGRIHOME_STUB_HINGE_DEG` | — | Bench hinge pose without Moonraker |
-| `AGRIHOME_STUB_MOTOR_MM` | — | Bench motor pose without Moonraker |
-| `AGRIHOME_CAPTURE_ROTATION` | `0` | Pi-side rotate; keep `0` — server applies `DEVICE_CAPTURE_ROTATION` via sharp |
-| `AGRIHOME_CAPTURE_CROP` | `off` | Pi-side crop; keep `off` — server applies `DEVICE_CAPTURE_CROP` |
+| `AGRI_MONITOR_MOONRAKER_URL` | `http://127.0.0.1:7125` | Moonraker control API for Get position / G-code |
+| `AGRI_MONITOR_POSITION_AXES` | `x,y` | Hinge/motor axis letters or indices in `toolhead.position` |
+| `AGRI_MONITOR_SNAPSHOT_CMD` | — | Path to `save_image.sh` (preferred) |
+| `AGRI_MONITOR_SNAPSHOT_PATH` | — | Fallback HTTP still path/URL |
+| `AGRI_MONITOR_HEARTBEAT_SECONDS` | `5` | Poll / claim interval |
+| `AGRI_MONITOR_ACTUATOR_DRY_RUN` | `1` | Skip real G-code until macros ready |
+| `AGRI_MONITOR_STUB_HINGE_DEG` | — | Bench hinge pose without Moonraker |
+| `AGRI_MONITOR_STUB_MOTOR_MM` | — | Bench motor pose without Moonraker |
+| `AGRI_MONITOR_CAPTURE_ROTATION` | `0` | Pi-side rotate; keep `0` — server applies `DEVICE_CAPTURE_ROTATION` via sharp |
+| `AGRI_MONITOR_CAPTURE_CROP` | `off` | Pi-side crop; keep `off` — server applies `DEVICE_CAPTURE_CROP` |
 
-Server ingest framing (AgriHome `.env`): `DEVICE_CAPTURE_ROTATION=180` (default) then
+Server ingest framing (Agri Monitor `.env`): `DEVICE_CAPTURE_ROTATION=180` (default) then
 `DEVICE_CAPTURE_CROP=center` before save + disease detection. Do not also rotate 180°
 on the Pi or images will be upside down again.
 ## Vision Console
@@ -261,17 +261,17 @@ on the Pi or images will be upside down again.
 ## Capture schedule runner (production)
 
 The Next.js app does **not** tick schedules by itself. Run the runner on a cron
-(every minute is fine) on the AgriHome host (e.g. agrihome.tech):
+(every minute is fine) on the Agri Monitor host (e.g. agri-monitor.tech):
 
 ```bash
 # crontab -e
-* * * * * cd /path/to/agrihome && /usr/bin/npm run capture:schedule-runner >> /var/log/agrihome-capture-schedule.log 2>&1
+* * * * * cd /path/to/agri-monitor && /usr/bin/npm run capture:schedule-runner >> /var/log/agri-monitor-capture-schedule.log 2>&1
 ```
 
 Or:
 
 ```bash
-* * * * * cd /path/to/agrihome && node scripts/capture-schedule-runner.cjs
+* * * * * cd /path/to/agri-monitor && node scripts/capture-schedule-runner.cjs
 ```
 
 Requires `POSTGRES_*` in `.env` / `.env.local`. Due rows with
@@ -284,9 +284,9 @@ mesh, `interval_minutes`, `active`, `next_run_at`, `last_run_at`,
 
 Update optional streamer URL via UI (`action: updateKlipperUrl`) or SQL.
 This field is for HTTP stills only — Get position uses Moonraker on the Pi
-(`AGRIHOME_MOONRAKER_URL` / `http://127.0.0.1:7125`), reading
+(`AGRI_MONITOR_MOONRAKER_URL` / `http://127.0.0.1:7125`), reading
 `toolhead.position` (default X→`hingeDeg` / Y→`motorMm`; override with
-`AGRIHOME_POSITION_AXES`), not `klipper_url`. After a move, confirm with:
+`AGRI_MONITOR_POSITION_AXES`), not `klipper_url`. After a move, confirm with:
 
 ```bash
 curl -s http://127.0.0.1:7125/printer/objects/query \
@@ -309,7 +309,7 @@ agent API key or an unauthenticated webcam stream to the public internet.
 
 - [ ] `npm run db:migrate` applied (`012_klipper_url`)
 - [ ] `DEVICE_PROVISIONING_SECRET` set on server and Pi
-- [ ] Agri-Home/klipper installed; `save_image.sh` writes a JPEG
+- [ ] agri-monitor/klipper installed; `save_image.sh` writes a JPEG
 - [ ] Agent registered from the klipper clone; Devices page shows **online**
 - [ ] Take picture → frame via agent ingest (and plant attach / disease hooks)
 - [ ] Optional: LAN streamer URL for server-side fast path

@@ -1,8 +1,8 @@
 # Plant trainer and plant classifier (Docker GPU services)
 
-This document describes the two companion services in [`docker-compose.full-stack.yml`](../docker-compose.full-stack.yml): **`plant-trainer`** and **`plant-classifier`**. Both use the same image (**`agrihome-plant-cv:cuda`**) built from **`cv-backend/Dockerfile.cuda`**, but they run different commands and mounts for different jobs.
+This document describes the two companion services in [`docker-compose.full-stack.yml`](../docker-compose.full-stack.yml): **`plant-trainer`** and **`plant-classifier`**. Both use the same image (**`agri-monitor-plant-cv:cuda`**) built from **`cv-backend/Dockerfile.cuda`**, but they run different commands and mounts for different jobs.
 
-For how AgriHome calls the classifier from Next.js, see [CV_PIPELINE.md](./CV_PIPELINE.md).
+For how Agri Monitor calls the classifier from Next.js, see [CV_PIPELINE.md](./CV_PIPELINE.md).
 
 ---
 
@@ -21,12 +21,12 @@ For how AgriHome calls the classifier from Next.js, see [CV_PIPELINE.md](./CV_PI
 
 - **Build context:** directory that contains **`Dockerfile.cuda`**, **`train.py`**, **`serve.py`**, **`requirements-docker-cuda.txt`** (in the repo this is **`cv-backend/`**).
 - **Base image:** `pytorch/pytorch:2.5.1-cuda12.4-cudnn9-runtime` by default (overridable via `ARG PYTORCH_IMAGE` in `Dockerfile.cuda`). Pick a tag that matches your **NVIDIA driver** and CUDA stack.
-- **Image name:** `agrihome-plant-cv:cuda` (local build; not pulled from a registry unless you tag and push it yourself).
+- **Image name:** `agri-monitor-plant-cv:cuda` (local build; not pulled from a registry unless you tag and push it yourself).
 
-If Compose cannot find the build context, it may try to **pull** `agrihome-plant-cv:cuda` and fail with “pull access denied”. Fix by cloning the full repo or setting:
+If Compose cannot find the build context, it may try to **pull** `agri-monitor-plant-cv:cuda` and fail with “pull access denied”. Fix by cloning the full repo or setting:
 
 ```env
-AGRIHOME_CV_BACKEND=/absolute/path/to/agrihome/cv-backend
+AGRI_MONITOR_CV_BACKEND=/absolute/path/to/agri-monitor/cv-backend
 ```
 
 next to your compose file, then:
@@ -43,7 +43,7 @@ docker compose -f docker-compose.full-stack.yml build plant-trainer plant-classi
 2. **[NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)** so Docker can pass GPUs into containers.
 3. **PlantVillage** (or compatible **`ImageFolder`**) dataset on the host, with **`raw/color`** as the training root — folders named like **`Tomato___healthy`**, **`Squash___Powdery_mildew`**, not only **`color` / `grayscale` / `segmented`**. See [CV_PIPELINE.md](./CV_PIPELINE.md#plantvillage-dataset).
 4. A **writable training workspace** on the host (example paths from compose):
-   - **`/mnt/mainpool/apps/agrihome-train`** → mounted as **`/workspace`** in both services.
+   - **`/mnt/mainpool/apps/agri-monitor-train`** → mounted as **`/workspace`** in both services.
 5. Dataset mount (read-only for trainer):
    - **`/mnt/mainpool/datasets/plantvillage`** → **`/data/plantvillage`** in **`plant-trainer`** only.
 
@@ -52,7 +52,7 @@ Adjust these paths in `docker-compose.full-stack.yml` if your NAS layout differs
 Suggested layout on disk:
 
 ```text
-/mnt/mainpool/apps/agrihome-train/    # workspace (artifacts + optional scripts)
+/mnt/mainpool/apps/agri-monitor-train/    # workspace (artifacts + optional scripts)
   artifacts/
     best.pt
     classes.json
@@ -72,10 +72,10 @@ Training is **not** run automatically at container start. The container stays al
 ### Compose defaults (reference)
 
 - **Container name:** `plant-trainer`
-- **`working_dir`:** `/workspace` (host: `agrihome-train`)
+- **`working_dir`:** `/workspace` (host: `agri-monitor-train`)
 - **`command`:** `sleep infinity`
 - **Volumes:**
-  - `agrihome-train:/workspace` (read/write)
+  - `agri-monitor-train:/workspace` (read/write)
   - `plantvillage:/data/plantvillage:ro`
 - **`gpus`:** one GPU, `compute,utility`
 - **Environment:** `NVIDIA_VISIBLE_DEVICES=0` (change index if you have multiple GPUs)
@@ -101,7 +101,7 @@ python /app/train.py \
 Notes:
 
 - **`--data-dir`** must point at the **`raw/color`**-style tree (class subfolders). **`train.py`** exits with an error if it detects split-folder class names `color`, `grayscale`, or `segmented`.
-- Outputs are written under **`/workspace/artifacts/`** → on the host, **`…/agrihome-train/artifacts/`**:
+- Outputs are written under **`/workspace/artifacts/`** → on the host, **`…/agri-monitor-train/artifacts/`**:
   - **`best.pt`** — model weights (validation accuracy checkpoint)
   - **`classes.json`** — class names in **training order** (must match the checkpoint)
 
@@ -118,7 +118,7 @@ Tune **`--batch-size`** if you hit GPU OOM; use **`--num-workers`** if DataLoade
 
 ### Why it exists
 
-It exposes the **HTTP API** AgriHome uses as **`CV_SPECIES_INFERENCE_URL`**: **`POST /v1/classify`** with a base64 image, returning crop/condition fields parsed from PlantVillage-style labels.
+It exposes the **HTTP API** Agri Monitor uses as **`CV_SPECIES_INFERENCE_URL`**: **`POST /v1/classify`** with a base64 image, returning crop/condition fields parsed from PlantVillage-style labels.
 
 ### Compose defaults (reference)
 
@@ -127,7 +127,7 @@ It exposes the **HTTP API** AgriHome uses as **`CV_SPECIES_INFERENCE_URL`**: **`
 - **Command:**  
   `python /app/serve.py --checkpoint /workspace/artifacts/best.pt --classes /workspace/artifacts/classes.json --host 0.0.0.0 --port 8765`
 - **Volumes:**
-  - `agrihome-train:/workspace:ro` — **read-only** so inference cannot overwrite artifacts by mistake
+  - `agri-monitor-train:/workspace:ro` — **read-only** so inference cannot overwrite artifacts by mistake
 - **Ports:** `8765:8765` (map host port as needed, e.g. `8754:8765`)
 - **Environment:**
   - `USE_CLAHE=0` by default; set to **`1`** for optional LAB CLAHE before the CNN (see `serve.py`)
@@ -149,7 +149,7 @@ Empty or invalid `imageBase64` returns **400** with a clear message (not 500).
 
 ### Publishing to the LAN
 
-Inside Docker **Compose**, the **`agrihome`** app typically uses the **internal** URL:
+Inside Docker **Compose**, the **`agri-monitor`** app typically uses the **internal** URL:
 
 ```env
 CV_SPECIES_INFERENCE_URL=http://plant-classifier:8765/v1/classify
@@ -185,11 +185,11 @@ You should see **`first_class`** matching the first entry in your **`classes.jso
 
 ```mermaid
 flowchart LR
-  subgraph image["Image agrihome-plant-cv:cuda"]
+  subgraph image["Image agri-monitor-plant-cv:cuda"]
     APP["/app/train.py\n/app/serve.py"]
   end
   subgraph host["Host disks"]
-    W[("agrihome-train\n→ /workspace")]
+    W[("agri-monitor-train\n→ /workspace")]
     D[("plantvillage\n→ /data/plantvillage")]
   end
   PT["plant-trainer\nsleep infinity"]
@@ -208,9 +208,9 @@ flowchart LR
 | Symptom | Likely cause | What to do |
 |--------|----------------|------------|
 | **`/health` shows 3 classes** or **`first_class": "color"`** | Old **`classes.json`** still loaded, or wrong **`artifacts`**; or you are curling a **different** host/port | Restart **`plant-classifier`**; confirm **`curl` URL** matches **`CV_SPECIES_INFERENCE_URL`**; check **`/health`** `classes_file` path |
-| **`pull access denied`** for `agrihome-plant-cv:cuda` | Build context missing | Set **`AGRIHOME_CV_BACKEND`**, run **`docker compose build`** |
+| **`pull access denied`** for `agri-monitor-plant-cv:cuda` | Build context missing | Set **`AGRI_MONITOR_CV_BACKEND`**, run **`docker compose build`** |
 | Container exits on start | **`classes.json` vs `best.pt` mismatch** or invalid split-folder JSON | Fix artifacts pair; read **`docker logs plant-classifier`** |
-| AgriHome errors on classify | URL missing **`/v1/classify`**, or firewall | Use full URL; test with **`curl`** from the same machine as Next.js |
+| Agri Monitor errors on classify | URL missing **`/v1/classify`**, or firewall | Use full URL; test with **`curl`** from the same machine as Next.js |
 | Training very slow | CPU instead of GPU | Run **`nvidia-smi`** inside **`plant-trainer`**; check **`gpus:`** in compose |
 
 ---
@@ -224,6 +224,6 @@ flowchart LR
 | [`cv-backend/train.py`](../cv-backend/train.py) | Training CLI and dataset checks |
 | [`cv-backend/serve.py`](../cv-backend/serve.py) | FastAPI inference and validation |
 | [`cv-backend/requirements-docker-cuda.txt`](../cv-backend/requirements-docker-cuda.txt) | Pip deps on top of PyTorch base image |
-| [`docs/CV_PIPELINE.md`](./CV_PIPELINE.md) | End-to-end CV ↔ AgriHome integration |
+| [`docs/CV_PIPELINE.md`](./CV_PIPELINE.md) | End-to-end CV ↔ Agri Monitor integration |
 
 For a shorter local-venv workflow (no Docker), see [`cv-backend/README.md`](../cv-backend/README.md).

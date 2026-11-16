@@ -1,5 +1,5 @@
 # GPU training + inference. Base image must match your host driver/CUDA (see PyTorch Docker tags).
-# Build: docker build -f Dockerfile.cuda -t agrihome-plant-cv:cuda .
+# Build: docker build -f Dockerfile.cuda -t agri-monitor-plant-cv:cuda .
 #
 # Pin tag at https://hub.docker.com/r/pytorch/pytorch/tags
 ARG PYTORCH_IMAGE=pytorch/pytorch:2.5.1-cuda12.4-cudnn9-runtime

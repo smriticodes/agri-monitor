@@ -1,6 +1,6 @@
 \label{sec:systemdesc}
 
-This section provides a consolidated \textbf{subsystem definition} and \textbf{data-flow} narrative for the AgriHome Vision Console, including the Summer~2026 Raspberry~Pi / Klipper edge path. Figure~\ref{fig:subsys-flow} maps major building blocks to the five layers introduced in Section~2. The text following the figure walks through each layer and explains how information moves from user or agent intent to durable storage and back.
+This section provides a consolidated \textbf{subsystem definition} and \textbf{data-flow} narrative for the Agri Monitor Vision Console, including the Summer~2026 Raspberry~Pi / Klipper edge path. Figure~\ref{fig:subsys-flow} maps major building blocks to the five layers introduced in Section~2. The text following the figure walks through each layer and explains how information moves from user or agent intent to durable storage and back.
 
 \begin{figure}[H]
 \centering
@@ -28,7 +28,7 @@ This section provides a consolidated \textbf{subsystem definition} and \textbf{d
 };
 \node[band, fill=teal!14, below=0.45cm of r4] (r5) {
   \textbf{Hardware Layer}\par
-  Raspberry~Pi \textbullet{} Agri-Home/klipper + \texttt{fswebcam} (\texttt{save\_image.sh}) \textbullet{} optional HTTP streamer \textbullet{} \texttt{agrihome\_agent}
+  Raspberry~Pi \textbullet{} agri-monitor/klipper + \texttt{fswebcam} (\texttt{save\_image.sh}) \textbullet{} optional HTTP streamer \textbullet{} \texttt{agri\_monitor\_agent}
 };
 \draw[arr] (r1.south) -- (r2.north);
 \draw[arr, dashed] (r2.south) -- node[right, font=\scriptsize] {invoke when required} (r3.north);
@@ -62,7 +62,7 @@ The Data Layer splits \textbf{transactional} concerns from \textbf{bulk media}. 
 
 \subsection{Hardware layer composition}
 
-The Hardware Layer is the bench capture plane: a \textbf{Raspberry~Pi} host, \textbf{Agri-Home/klipper} with \texttt{fswebcam}, optional HTTP streamer, and \textbf{\texttt{agrihome\_agent}}. Agents register and heartbeat; operators trigger Take Picture; schedules drive multi-pose walks. Primary capture is agent + \texttt{fswebcam}; optional server-side stills use a LAN-reachable \texttt{klipper\_url}.
+The Hardware Layer is the bench capture plane: a \textbf{Raspberry~Pi} host, \textbf{agri-monitor/klipper} with \texttt{fswebcam}, optional HTTP streamer, and \textbf{\texttt{agri\_monitor\_agent}}. Agents register and heartbeat; operators trigger Take Picture; schedules drive multi-pose walks. Primary capture is agent + \texttt{fswebcam}; optional server-side stills use a LAN-reachable \texttt{klipper\_url}.
 
 \subsection{End-to-end data flow summary}
 

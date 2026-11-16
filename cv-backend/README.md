@@ -49,7 +49,7 @@ Outputs:
 
 Adjust `--epochs`, `--batch-size`, and `--lr` for your GPU. CPU training is slow but works for smoke tests.
 
-## Serve (AgriHome `CV_SPECIES_INFERENCE_URL`)
+## Serve (Agri Monitor `CV_SPECIES_INFERENCE_URL`)
 
 ```bash
 python serve.py --checkpoint ./artifacts/best.pt --classes ./artifacts/classes.json --host 0.0.0.0 --port 8765
@@ -62,7 +62,7 @@ export USE_CLAHE=1
 python serve.py --checkpoint ./artifacts/best.pt --classes ./artifacts/classes.json
 ```
 
-In the AgriHome repo `.env`:
+In the Agri Monitor repo `.env`:
 
 ```env
 CV_SPECIES_INFERENCE_URL=http://127.0.0.1:8765/v1/classify
@@ -73,14 +73,14 @@ CV_SPECIES_INFERENCE_URL=http://127.0.0.1:8765/v1/classify
 - `POST /v1/classify` — body `{ "imageBase64": "..." }` → JSON with `commonName`, `cultivar`, `plantCondition`, `rawLabel`, `isHealthy`, `identificationConfidence`.  
 - `GET /health` — process up and class count.
 
-## Troubleshooting: “pull access denied for agrihome-plant-cv” / “path …/cv-backend not found”
+## Troubleshooting: “pull access denied for agri-monitor-plant-cv” / “path …/cv-backend not found”
 
-Compose **builds** `agrihome-plant-cv:cuda` from a **local folder** that must exist on the server (`Dockerfile.cuda` inside it). If the build context path is wrong, the build fails and Compose tries to **pull** that image name from a registry → **access denied**.
+Compose **builds** `agri-monitor-plant-cv:cuda` from a **local folder** that must exist on the server (`Dockerfile.cuda` inside it). If the build context path is wrong, the build fails and Compose tries to **pull** that image name from a registry → **access denied**.
 
 **Fix:** Ensure the repo’s **`cv-backend/`** directory exists where `build.context` points (clone the full repo, or copy `cv-backend/` to the server). With [docker-compose.full-stack.yml](../docker-compose.full-stack.yml), set a `.env` next to the compose file if needed:
 
 ```env
-AGRIHOME_CV_BACKEND=/absolute/path/to/agrihome/cv-backend
+AGRI_MONITOR_CV_BACKEND=/absolute/path/to/agri-monitor/cv-backend
 ```
 
 Then `docker compose -f docker-compose.full-stack.yml build plant-classifier`.
@@ -95,22 +95,22 @@ Your **“sleep infinity” + bind mounts** pattern is right. Prefer the CUDA im
 
 - Install the **NVIDIA driver** and **[NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)**.
 - Put PlantVillage **`raw/color`** on the server (e.g. `/mnt/mainpool/datasets/plantvillage`) so it contains folders like `Tomato___healthy/`, not a parent `raw/` only.
-- Create a workspace (e.g. `/mnt/mainpool/apps/agrihome-train`) and copy **`train.py`**, **`serve.py`**, and build context for **`Dockerfile.cuda`** (or clone the repo and point the volume at `.../agrihome/cv-backend`).
+- Create a workspace (e.g. `/mnt/mainpool/apps/agri-monitor-train`) and copy **`train.py`**, **`serve.py`**, and build context for **`Dockerfile.cuda`** (or clone the repo and point the volume at `.../agri-monitor/cv-backend`).
 
 ### 2. Build the CV image
 
 ```bash
 cd /path/to/cv-backend   # directory with Dockerfile.cuda
-docker build -f Dockerfile.cuda -t agrihome-plant-cv:cuda .
+docker build -f Dockerfile.cuda -t agri-monitor-plant-cv:cuda .
 ```
 
-### 3. Merge into your Agrihome compose (recommended)
+### 3. Merge into your Agri Monitor compose (recommended)
 
-Add two services on the **same `networks: [agrihome_net]`** as `agrihome`, and point the app at the API by **container name**:
+Add two services on the **same `networks: [agri-monitor_net]`** as `agri-monitor`, and point the app at the API by **container name**:
 
 ```yaml
   plant-trainer:
-    image: agrihome-plant-cv:cuda
+    image: agri-monitor-plant-cv:cuda
     container_name: plant-trainer
     restart: unless-stopped
     working_dir: /workspace
@@ -119,17 +119,17 @@ Add two services on the **same `networks: [agrihome_net]`** as `agrihome`, and p
       NVIDIA_VISIBLE_DEVICES: "0"   # P40; nvidia-smi -L to confirm index
       NVIDIA_DRIVER_CAPABILITIES: compute,utility
     volumes:
-      - /mnt/mainpool/apps/agrihome-train:/workspace
+      - /mnt/mainpool/apps/agri-monitor-train:/workspace
       - /mnt/mainpool/datasets/plantvillage:/data/plantvillage:ro
     gpus:
       - driver: nvidia
         count: 1
         capabilities: [gpu]
     networks:
-      - agrihome_net
+      - agri-monitor_net
 
   plant-cv:
-    image: agrihome-plant-cv:cuda
+    image: agri-monitor-plant-cv:cuda
     container_name: plant-cv
     restart: unless-stopped
     environment:
@@ -147,7 +147,7 @@ Add two services on the **same `networks: [agrihome_net]`** as `agrihome`, and p
       - --port
       - "8765"
     volumes:
-      - /mnt/mainpool/apps/agrihome-train:/workspace:ro
+      - /mnt/mainpool/apps/agri-monitor-train:/workspace:ro
     ports:
       - "8765:8765"
     gpus:
@@ -155,10 +155,10 @@ Add two services on the **same `networks: [agrihome_net]`** as `agrihome`, and p
         count: 1
         capabilities: [gpu]
     networks:
-      - agrihome_net
+      - agri-monitor_net
 ```
 
-On **`agrihome`**, add:
+On **`agri-monitor`**, add:
 
 ```yaml
       CV_SPECIES_INFERENCE_URL: http://plant-cv:8765/v1/classify
@@ -183,6 +183,6 @@ docker compose up -d plant-cv   # after best.pt exists
 
 ## Notes
 
-- **Tray counting** is not covered here; use a separate detector and `CV_TRAY_INFERENCE_URL` in AgriHome.  
+- **Tray counting** is not covered here; use a separate detector and `CV_TRAY_INFERENCE_URL` in Agri Monitor.  
 - For production, add auth (reverse proxy + API key), rate limits, and fine-tuning on your own leaf images.  
 - Full pipeline documentation: [docs/CV_PIPELINE.md](../docs/CV_PIPELINE.md).

@@ -2,7 +2,7 @@
 
 ## Threat model (bench network)
 
-- Rogue hardware joining AgriHome with a guessed provisioning code
+- Rogue hardware joining Agri Monitor with a guessed provisioning code
 - Stolen device API keys used to upload spam images or poll commands
 - Replay of registration to mint unlimited trays
 
@@ -24,7 +24,7 @@
 
 1. Set a long random `DEVICE_PROVISIONING_SECRET` (32+ bytes).
 2. Set `DEVICE_DEFAULT_OWNER_EMAIL` only for single-tenant benches; otherwise require `ownerEmail` on register.
-3. Prefer TLS termination in front of AgriHome; Pi agents should use HTTPS.
+3. Prefer TLS termination in front of Agri Monitor; Pi agents should use HTTPS.
 4. Rotate provisioning secret when an operator leaves or a bench is decommissioned.
 5. Revoke devices that leave the facility; re-provision with `reProvision: true` only when intentional.
 6. Keep Klipper API auth enabled on the Pi LAN; do not expose Klipper to the public internet without auth.

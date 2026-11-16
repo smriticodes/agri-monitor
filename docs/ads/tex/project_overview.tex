@@ -1,6 +1,6 @@
 \label{sec:overview}
 
-The AgriHome Vision Console is designed using a \textbf{layered architecture}. Each layer has a distinct role; layers interact through well-defined interfaces (HTTP APIs between client and server, device-key APIs to edge agents, internal service calls within the server, SQL and file I/O toward stores, optional outbound calls to inference services, and optional HTTP still pulls to LAN streamers). This separation improves modularity, testability, and the ability to scale or replace one concern (for example, swapping a vision provider or webcam path) without rewriting unrelated areas.
+The Agri Monitor Vision Console is designed using a \textbf{layered architecture}. Each layer has a distinct role; layers interact through well-defined interfaces (HTTP APIs between client and server, device-key APIs to edge agents, internal service calls within the server, SQL and file I/O toward stores, optional outbound calls to inference services, and optional HTTP still pulls to LAN streamers). This separation improves modularity, testability, and the ability to scale or replace one concern (for example, swapping a vision provider or webcam path) without rewriting unrelated areas.
 
 The system comprises \textbf{five primary layers}:
 
@@ -9,7 +9,7 @@ The system comprises \textbf{five primary layers}:
   \item \textbf{Application Layer} — server-side control: HTTP and GraphQL entry points (including \texttt{/api/raspberry-pi/*} and \texttt{/api/devices/*}), session and device-key verification, validation, routing of work to domain services, coordination of reads and writes to the data layer, invocation of the processing layer when needed, and optional HTTP streamer still fetches.
   \item \textbf{Processing Layer} — computer-vision and analytics \emph{adapters}, plus edge post-ingest hooks and the capture schedule runner: optional services that accept images or features and return structured labels, detections, or scores; schedule runners that enqueue \texttt{capture\_now} work for \texttt{raspberry-pi-edge} destinations.
   \item \textbf{Data Layer} — durable storage: relational database for domain and edge entities (\texttt{edge\_devices}, \texttt{edge\_device\_commands}, \texttt{capture\_pose\_sequences}, \texttt{capture\_poses}, \texttt{capture\_schedules}, \texttt{camera\_captures}, \texttt{plants}, \texttt{prediction\_results}, trays, meshes, reports), and object or file storage for imagery; optional vector index for similarity search when enabled.
-  \item \textbf{Hardware Layer} — Raspberry~Pi hosts running Agri-Home/klipper (\texttt{fswebcam} / \texttt{camera-macros/save\_image.sh}), optional LAN HTTP streamer bases, and the \texttt{agrihome\_agent} bridge that registers, heartbeats, captures, and ingests.
+  \item \textbf{Hardware Layer} — Raspberry~Pi hosts running agri-monitor/klipper (\texttt{fswebcam} / \texttt{camera-macros/save\_image.sh}), optional LAN HTTP streamer bases, and the \texttt{agri\_monitor\_agent} bridge that registers, heartbeats, captures, and ingests.
 \end{enumerate}
 
 \subsection{Presentation layer description}
@@ -42,7 +42,7 @@ It also terminates \textbf{device-key} traffic from Raspberry~Pi agents (\texttt
 
 \subsection{Processing layer description}
 
-The Processing Layer performs \textbf{compute-intensive or model-based} work and \textbf{asynchronous capture orchestration} that should not block the interactive UI thread. In AgriHome this includes, when configured, \textbf{species or leaf-level classification}, \textbf{tray-level vision}, the \textbf{edge disease hook} after Pi ingest, and the \textbf{capture schedule runner} that enqueues edge capture commands for destinations marked \texttt{raspberry-pi-edge}.
+The Processing Layer performs \textbf{compute-intensive or model-based} work and \textbf{asynchronous capture orchestration} that should not block the interactive UI thread. In Agri Monitor this includes, when configured, \textbf{species or leaf-level classification}, \textbf{tray-level vision}, the \textbf{edge disease hook} after Pi ingest, and the \textbf{capture schedule runner} that enqueues edge capture commands for destinations marked \texttt{raspberry-pi-edge}.
 
 When no external model is available, the Application Layer may apply \textbf{deterministic or simulated} behavior for development and demonstration; the architecture still treats that path as ``processing'' logically because it produces structured inference output distinct from raw CRUD.
 
@@ -57,7 +57,7 @@ When no external model is available, the Application Layer may apply \textbf{det
 
 \subsection{Data layer description}
 
-The Data Layer is the \textbf{authoritative foundation} for AgriHome. The relational store holds entities and relationships that satisfy SRS concepts: plant health records over time, capture references, environmental or monitoring events as modeled, mesh membership, schedules, and Summer~2026 \textbf{edge} tables (\texttt{edge\_devices}, \texttt{edge\_device\_commands}, pose sequences/poses). Object storage holds binary assets (camera frames, user uploads) referenced by identifiers or URLs in the relational model.
+The Data Layer is the \textbf{authoritative foundation} for Agri Monitor. The relational store holds entities and relationships that satisfy SRS concepts: plant health records over time, capture references, environmental or monitoring events as modeled, mesh membership, schedules, and Summer~2026 \textbf{edge} tables (\texttt{edge\_devices}, \texttt{edge\_device\_commands}, pose sequences/poses). Object storage holds binary assets (camera frames, user uploads) referenced by identifiers or URLs in the relational model.
 
 Optional components such as a \textbf{vector database} participate in this layer when similarity or embedding search is required; they remain secondary to the relational system of record.
 
@@ -71,7 +71,7 @@ Optional components such as a \textbf{vector database} participate in this layer
 
 \subsection{Hardware layer description}
 
-The Hardware Layer is the \textbf{physical capture plane}. Raspberry~Pi devices run Agri-Home/klipper with \texttt{fswebcam} and the \texttt{agrihome\_agent}, which auto-provisions into AgriHome, reports online status, and delivers imagery by answering queued commands (primary) or by exposing an optional HTTP streamer that the Application Layer can pull when the Pi is LAN-reachable from the server.
+The Hardware Layer is the \textbf{physical capture plane}. Raspberry~Pi devices run agri-monitor/klipper with \texttt{fswebcam} and the \texttt{agri\_monitor\_agent}, which auto-provisions into Agri Monitor, reports online status, and delivers imagery by answering queued commands (primary) or by exposing an optional HTTP streamer that the Application Layer can pull when the Pi is LAN-reachable from the server.
 
 \textbf{Key responsibilities:}
 \begin{itemize}
@@ -96,7 +96,7 @@ Figure~\ref{fig:layer-arch} summarizes the five layers and primary external acto
 \node[layer, below=0.38cm of L1, fill=blue!8] (L2) {\textbf{Application Layer}\quad\textit{(APIs, sessions, /api/raspberry-pi/*, /api/devices/*)}};
 \node[layer, below=0.38cm of L2, fill=orange!14] (L3) {\textbf{Processing Layer}\quad\textit{(CV adapters; edge-disease-hook; schedule runner)}};
 \node[layer, below=0.38cm of L3, fill=gray!14] (L4) {\textbf{Data Layer}\quad\textit{(PostgreSQL domain + edge tables; object storage)}};
-\node[layer, below=0.38cm of L4, fill=teal!16] (L5) {\textbf{Hardware Layer}\quad\textit{(Pi; Klipper/fswebcam; agrihome\_agent)}};
+\node[layer, below=0.38cm of L4, fill=teal!16] (L5) {\textbf{Hardware Layer}\quad\textit{(Pi; Klipper/fswebcam; agri\_monitor\_agent)}};
 
 \node[draw, circle, minimum size=0.6cm, left=0.55cm of L1, font=\scriptsize, inner sep=0pt] (u) {U};
 \node[draw, rounded corners, font=\scriptsize, right=0.35cm of L1, align=center, inner sep=4pt] (idp) {Identity\\provider};
@@ -109,10 +109,10 @@ Figure~\ref{fig:layer-arch} summarizes the five layers and primary external acto
 \draw[arr, bend left=18] (L5.west) to node[left, font=\scriptsize, align=center] {register\\heartbeat\\ingest} (L2.west);
 \draw[arr, dashed, bend right=12] (L2.east) to node[right, font=\scriptsize] {snapshot} (L5.east);
 \end{tikzpicture}
-\caption{AgriHome Vision Console: five-layer architecture with Pi/Klipper edge trust boundaries.}
+\caption{Agri Monitor Vision Console: five-layer architecture with Pi/Klipper edge trust boundaries.}
 \label{fig:layer-arch}
 \end{figure}
 
 \subsection{System workflow overview}
 
-A typical end-to-end path begins when a signed-in user opens a \textbf{tray} or \textbf{Devices} view in the Presentation Layer. The client requests data from the Application Layer, which reads the \textbf{Data Layer} (relational and, when needed, media URLs). For \textbf{Take Picture}, the Application Layer primarily queues a command that \texttt{agrihome\_agent} claims on heartbeat, captures via \texttt{fswebcam}/\texttt{save\_image.sh}, and multipart-ingests; if an optional streamer URL is reachable it may pull a still first. When vision-assisted analysis is configured, the Processing Layer's edge disease hook may classify the capture; results return as structured data and are written to \texttt{prediction\_results} / reports. Scheduled \texttt{raspberry-pi-edge} policies are advanced by the capture schedule runner. Updated state flows back to the Presentation Layer for display.
+A typical end-to-end path begins when a signed-in user opens a \textbf{tray} or \textbf{Devices} view in the Presentation Layer. The client requests data from the Application Layer, which reads the \textbf{Data Layer} (relational and, when needed, media URLs). For \textbf{Take Picture}, the Application Layer primarily queues a command that \texttt{agri\_monitor\_agent} claims on heartbeat, captures via \texttt{fswebcam}/\texttt{save\_image.sh}, and multipart-ingests; if an optional streamer URL is reachable it may pull a still first. When vision-assisted analysis is configured, the Processing Layer's edge disease hook may classify the capture; results return as structured data and are written to \texttt{prediction\_results} / reports. Scheduled \texttt{raspberry-pi-edge} policies are advanced by the capture schedule runner. Updated state flows back to the Presentation Layer for display.

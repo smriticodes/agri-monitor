@@ -59,7 +59,7 @@ export default async function LandingPage() {
 
       <div className="mx-auto flex w-full max-w-3xl flex-col px-6 sm:px-8">
         <header className="flex items-center justify-between pt-10 sm:pt-14">
-          <p className="text-sm font-bold tracking-tight text-ink">AgriHome</p>
+          <p className="text-sm font-bold tracking-tight text-ink">Agri Monitor</p>
           <Link
             href="/login"
             className="rounded-2xl px-3 py-2 text-sm font-semibold text-ink/70 transition-colors hover:bg-ink/[0.05] hover:text-ink"
@@ -70,7 +70,7 @@ export default async function LandingPage() {
 
         <section className="flex min-h-[calc(100dvh-5.5rem)] flex-col items-center justify-center pb-16 text-center sm:pb-20">
           <p className="animate-fade-in text-5xl font-bold tracking-tight text-ink sm:text-6xl md:text-7xl">
-            AgriHome
+            Agri Monitor
           </p>
           <h1 className="animate-fade-in stagger-1 mt-5 max-w-xl text-xl font-semibold tracking-tight text-ink/85 sm:text-2xl">
             Watch your trays grow, from capture to care.

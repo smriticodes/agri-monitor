@@ -1,4 +1,4 @@
-# AgriHome Next Steps
+# Agri Monitor Next Steps
 
 This is the shortest practical roadmap after the current authentication-enabled baseline. It is meant to keep the next sprint focused and believable rather than reopening every unfinished area at once.
 

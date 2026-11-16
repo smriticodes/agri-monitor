@@ -18,7 +18,7 @@ export const runtime = "nodejs";
 
 /**
  * POST /api/raspberry-pi/heartbeat
- * Auth: X-Agrihome-Device-Key
+ * Auth: X-Agri Monitor-Device-Key
  * Updates last_heartbeat_at / status and optionally syncs actuator limits.
  * Returns pending capture commands for the agent to execute.
  */

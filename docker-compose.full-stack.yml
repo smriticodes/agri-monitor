@@ -2,23 +2,23 @@
 # Dockerfile.cuda, train.py, serve.py, requirements-docker-cuda.txt.
 #
 # Option A — full git clone on the server:
-#   cd /mnt/mainpool/apps && git clone <your-repo> agrihome && cd agrihome
+#   cd /mnt/mainpool/apps && git clone <your-repo> agri-monitor && cd agri-monitor
 #   (default context ./cv-backend works)
 #
 # Option B — compose lives elsewhere: set in a .env next to this file:
-#   AGRIHOME_CV_BACKEND=/absolute/path/to/cv-backend
+#   AGRI_MONITOR_CV_BACKEND=/absolute/path/to/cv-backend
 #
-# If context is wrong, build fails and Compose tries to "pull" agrihome-plant-cv:cuda → access denied.
+# If context is wrong, build fails and Compose tries to "pull" agri-monitor-plant-cv:cuda → access denied.
 #
-# First-time host dirs for app file storage (agrihome service bind mount):
-#   mkdir -p /mnt/mainpool/apps/agrihome/uploads/{originals,processed,temp,models,backups}
+# First-time host dirs for app file storage (agri-monitor service bind mount):
+#   mkdir -p /mnt/mainpool/apps/agri-monitor/uploads/{originals,processed,temp,models,backups}
 
 services:
   # Applies db/migrations/*.sql against an existing Postgres volume.
   # schema.sql only runs on first empty data dir; upgrades need this step.
   db-migrate:
     image: postgres:16
-    container_name: agrihome-db-migrate
+    container_name: agri-monitor-db-migrate
     volumes:
       - ./db/migrations:/migrations:ro
     environment:
@@ -28,20 +28,20 @@ services:
       - -c
       - |
         set -e
-        until pg_isready -h postgres -U agrihome -d agrihome >/dev/null 2>&1; do sleep 1; done
+        until pg_isready -h postgres -U agri_monitor -d agri_monitor >/dev/null 2>&1; do sleep 1; done
         for f in /migrations/*.sql; do
           echo "Applying $$f"
-          psql -v ON_ERROR_STOP=1 -h postgres -U agrihome -d agrihome -f "$$f"
+          psql -v ON_ERROR_STOP=1 -h postgres -U agri_monitor -d agri_monitor -f "$$f"
         done
     depends_on:
       - postgres
     restart: "no"
     networks:
-      - agrihome_net
+      - agri-monitor_net
 
-  agrihome:
-    image: ghcr.io/bhusallaxman22/agrihome:latest
-    container_name: agrihome
+  agri-monitor:
+    image: ghcr.io/smriticodes/agri-monitor:latest
+    container_name: agri-monitor
     restart: unless-stopped
     depends_on:
       - postgres
@@ -50,42 +50,42 @@ services:
     ports:
       - "3000:3000"
     environment:
-      APP_NAME: AgriHome Vision Console
-      NEXT_PUBLIC_APP_NAME: AgriHome Vision Console
+      APP_NAME: Agri Monitor Vision Console
+      NEXT_PUBLIC_APP_NAME: Agri Monitor Vision Console
       NEXT_PUBLIC_API_BASE_URL: http://localhost:3000
       NEXT_PUBLIC_AUTO_REFRESH_MS: 15000
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
-      POSTGRES_USER: agrihome
+      POSTGRES_USER: agri_monitor
       POSTGRES_PASSWORD: password
-      POSTGRES_DATABASE: agrihome
+      POSTGRES_DATABASE: agri_monitor
       QDRANT_URL: http://qdrant:6333
       QDRANT_API_KEY: ""
-      QDRANT_COLLECTION: agrihome-image-embeddings
+      QDRANT_COLLECTION: agri-monitor-image-embeddings
       CV_SPECIES_INFERENCE_URL: http://plant-classifier:8765/v1/classify
       # Bind mount below; host should have originals/processed/temp (see comment).
-      STORAGE_ROOT: /data/agrihome
-      STORAGE_ORIGINALS_DIR: /data/agrihome/originals
-      STORAGE_PROCESSED_DIR: /data/agrihome/processed
-      STORAGE_TEMP_DIR: /data/agrihome/temp
+      STORAGE_ROOT: /data/agri-monitor
+      STORAGE_ORIGINALS_DIR: /data/agri-monitor/originals
+      STORAGE_PROCESSED_DIR: /data/agri-monitor/processed
+      STORAGE_TEMP_DIR: /data/agri-monitor/temp
     volumes:
       # Host layout: .../uploads/{originals,processed,temp,models,backups}
-      - /mnt/mainpool/apps/agrihome/uploads:/data/agrihome
+      - /mnt/mainpool/apps/agri-monitor/uploads:/data/agri-monitor
     labels:
       - com.centurylinklabs.watchtower.enable=true
     networks:
-      - agrihome_net
+      - agri-monitor_net
 
   postgres:
     image: postgres:16
-    container_name: agrihome-postgres
+    container_name: agri-monitor-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: agrihome
+      POSTGRES_USER: agri_monitor
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: agrihome
+      POSTGRES_DB: agri_monitor
     volumes:
-      - /mnt/mainpool/apps/agrihome/postgres:/var/lib/postgresql/data
+      - /mnt/mainpool/apps/agri-monitor/postgres:/var/lib/postgresql/data
       - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - ./db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
     ports:
@@ -93,26 +93,26 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=false
     networks:
-      - agrihome_net
+      - agri-monitor_net
 
   qdrant:
     image: qdrant/qdrant:latest
-    container_name: agrihome-qdrant
+    container_name: agri-monitor-qdrant
     restart: unless-stopped
     volumes:
-      - /mnt/mainpool/apps/agrihome/qdrant/storage:/qdrant/storage
-      - /mnt/mainpool/apps/agrihome/qdrant/snapshots:/qdrant/snapshots
+      - /mnt/mainpool/apps/agri-monitor/qdrant/storage:/qdrant/storage
+      - /mnt/mainpool/apps/agri-monitor/qdrant/snapshots:/qdrant/snapshots
     ports:
       - "6333:6333"
       - "6334:6334"
     labels:
       - com.centurylinklabs.watchtower.enable=false
     networks:
-      - agrihome_net
+      - agri-monitor_net
 
   watchtower:
     image: containrrr/watchtower:latest
-    container_name: agrihome-watchtower
+    container_name: agri-monitor-watchtower
     restart: unless-stopped
     command:
       - --label-enable
@@ -123,13 +123,13 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - agrihome_net
+      - agri-monitor_net
 
   plant-trainer:
     build:
-      context: ${AGRIHOME_CV_BACKEND:-./cv-backend}
+      context: ${AGRI_MONITOR_CV_BACKEND:-./cv-backend}
       dockerfile: Dockerfile.cuda
-    image: agrihome-plant-cv:cuda
+    image: agri-monitor-plant-cv:cuda
     container_name: plant-trainer
     restart: unless-stopped
     working_dir: /workspace
@@ -138,7 +138,7 @@ services:
       NVIDIA_VISIBLE_DEVICES: "0"
       NVIDIA_DRIVER_CAPABILITIES: compute,utility
     volumes:
-      - /mnt/mainpool/apps/agrihome-train:/workspace
+      - /mnt/mainpool/apps/agri-monitor-train:/workspace
       - /mnt/mainpool/datasets/plantvillage:/data/plantvillage:ro
       # Optional multi-dataset training (see cv-backend/README.md):
       # - /mnt/mainpool/datasets/plantdoc:/data/plantdoc:ro
@@ -148,13 +148,13 @@ services:
         count: 1
         capabilities: [gpu]
     networks:
-      - agrihome_net
+      - agri-monitor_net
 
   plant-classifier:
     build:
-      context: ${AGRIHOME_CV_BACKEND:-./cv-backend}
+      context: ${AGRI_MONITOR_CV_BACKEND:-./cv-backend}
       dockerfile: Dockerfile.cuda
-    image: agrihome-plant-cv:cuda
+    image: agri-monitor-plant-cv:cuda
     container_name: plant-classifier
     restart: unless-stopped
     environment:
@@ -174,7 +174,7 @@ services:
       - "8765"
     working_dir: /app
     volumes:
-      - /mnt/mainpool/apps/agrihome-train:/workspace:ro
+      - /mnt/mainpool/apps/agri-monitor-train:/workspace:ro
     ports:
       - "8765:8765"
     gpus:
@@ -182,8 +182,8 @@ services:
         count: 1
         capabilities: [gpu]
     networks:
-      - agrihome_net
+      - agri-monitor_net
 
 networks:
-  agrihome_net:
+  agri-monitor_net:
     driver: bridge

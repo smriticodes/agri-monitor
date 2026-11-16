@@ -223,7 +223,7 @@ async function fetchSnapshotBytes(
 
 /**
  * Fetch a still frame from the device's Klipper webcam (when reachable from
- * the AgriHome server) and persist it as a camera capture.
+ * the Agri Monitor server) and persist it as a camera capture.
  */
 export async function captureFromKlipperStreamerDirect(input: {
   ownerEmail: string;

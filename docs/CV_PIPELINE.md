@@ -1,10 +1,10 @@
-# Computer vision pipeline: PlantVillage, tray analysis, and AgriHome
+# Computer vision pipeline: PlantVillage, tray analysis, and Agri Monitor
 
-This document connects **ML training** to AgriHome APIs.
+This document connects **ML training** to Agri Monitor APIs.
 
 **Docker GPU stack:** For **`plant-trainer`** and **`plant-classifier`** (compose, volumes, training vs inference workflows), see [PLANT_TRAINER_AND_CLASSIFIER.md](./PLANT_TRAINER_AND_CLASSIFIER.md).
 
-| Use case | Dataset / approach | AgriHome integration |
+| Use case | Dataset / approach | Agri Monitor integration |
 |----------|-------------------|----------------------|
 | **Crop + disease from leaf image** | [PlantVillage](https://github.com/spMohanty/PlantVillage-Dataset) (`raw/color` class folders) | `CV_SPECIES_INFERENCE_URL` → `cv-backend` FastAPI (`/v1/classify`) |
 | **Plants per tray (count + boxes)** | Object detector on your tray images | `CV_TRAY_INFERENCE_URL` (separate model) |
@@ -24,7 +24,7 @@ Clone and use the `raw/color` tree as **`torchvision.datasets.ImageFolder`** roo
 Then the HTTP response is **not** using that file path inside the running process. Common causes:
 
 1. **`plant-classifier` was not restarted** after you replaced `artifacts/` — Python loads `classes.json` **once at startup**. Old labels stay in memory until you restart the container/process.
-2. **AgriHome calls a different URL** than the host you checked — verify **`CV_SPECIES_INFERENCE_URL`** in the app’s `.env` matches the machine/port where you run **`serve.py`** (not an old laptop or another NAS service on port 8765).
+2. **Agri Monitor calls a different URL** than the host you checked — verify **`CV_SPECIES_INFERENCE_URL`** in the app’s `.env` matches the machine/port where you run **`serve.py`** (not an old laptop or another NAS service on port 8765).
 
 **Verify the running server (not only the file on disk):**
 
@@ -65,7 +65,7 @@ Python backend lives in **`cv-backend/`**:
    `python cv-backend/train.py --data-dir /path/to/PlantVillage-Dataset/raw/color --epochs 15 --output-dir cv-backend/artifacts`
 4. **Serve:**  
    `python cv-backend/serve.py --checkpoint cv-backend/artifacts/best.pt --classes cv-backend/artifacts/classes.json --host 0.0.0.0 --port 8765`
-5. In AgriHome **`.env`**:  
+5. In Agri Monitor **`.env`**:  
    `CV_SPECIES_INFERENCE_URL=http://localhost:8765/v1/classify`  
    Use the **host port** you publish (e.g. Compose `ports: ["8754:8765"]` → `http://192.168.0.142:8754/v1/classify`). The value must include **`/v1/classify`** — the app does not append it.
 
@@ -98,7 +98,7 @@ Authorization: Bearer <optional CV_SPECIES_INFERENCE_API_KEY>
 }
 ```
 
-**Response** (from `cv-backend/serve.py`; AgriHome accepts these fields):
+**Response** (from `cv-backend/serve.py`; Agri Monitor accepts these fields):
 
 ```json
 {
@@ -126,7 +126,7 @@ If **`CV_SPECIES_INFERENCE_URL`** is unset, `detectPlantSpeciesFromImage` **thro
 
 Same as before: JSON body `{ "imageBase64": "..." }`, response with `count`, `countConfidence`/`confidence`, `instances[]` (normalized boxes). See tray section in the implementation guide if you add a dedicated detector.
 
-## Environment variables (AgriHome)
+## Environment variables (Agri Monitor)
 
 | Variable | Purpose |
 |----------|---------|

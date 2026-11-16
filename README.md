@@ -1,4 +1,4 @@
-# AgriHome Vision Console
+# Agri Monitor Vision Console
 
 Full-stack **Next.js** monitoring UI for tray- and plant-level crop health: camera frames, CV-assisted counts and species ID, reports, meshes, and capture schedules. **PostgreSQL** is **required** for trays, plants, captures, and related APIs; **Qdrant** and remote CV URLs are optional extras.
 

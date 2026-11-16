@@ -1,4 +1,4 @@
-const CACHE_NAME = "agrihome-shell-v2";
+const CACHE_NAME = "agri-monitor-shell-v2";
 const APP_SHELL = ["/", "/manifest.webmanifest", "/pwa-icon.svg", "/pwa-maskable.svg"];
 
 self.addEventListener("install", (event) => {

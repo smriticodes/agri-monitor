@@ -44,7 +44,7 @@ Equivalent to a classic use-case diagram: the operator selects a tray and upload
 flowchart TB
   Operator([Operator])
 
-  subgraph AgriHome [AgriHome]
+  subgraph Agri Monitor [Agri Monitor]
     UC_T([Select tray])
     UC_P([Upload or capture plant photo])
     UC_D([Auto-detect species via CV service])

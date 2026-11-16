@@ -1,6 +1,6 @@
 # Image Feedback and Reclassification
 
-This document describes the **human-in-the-loop** capture of user images and corrective labels in AgriHome: why it exists, how operators use it, how the backend stores it, how it ties into add-plant flows, and how offline jobs can export data for model training and retraining gates.
+This document describes the **human-in-the-loop** capture of user images and corrective labels in Agri Monitor: why it exists, how operators use it, how the backend stores it, how it ties into add-plant flows, and how offline jobs can export data for model training and retraining gates.
 
 ---
 
@@ -120,7 +120,7 @@ Indexes support listing by user/time and **pending export** (rows with `exported
 
 - **Content-Type:** `multipart/form-data`
 - **Fields:** `image` (file, required), `feedbackCrop` (name), `feedbackCategory`, `tags`, `comment`, `modelPrediction` (optional individually; at least one of crop+category, category, tags, or comment must satisfy `trainingFeedbackFieldsPresent`).
-- **Auth:** Session cookie (Firebase) for interactive users, or `X-Agrihome-Feedback-Key` plus `userUid` / `userEmail` form fields when `FEEDBACK_INGEST_SERVICE_KEY` is set for trusted integrations.
+- **Auth:** Session cookie (Firebase) for interactive users, or `X-Agri Monitor-Feedback-Key` plus `userUid` / `userEmail` form fields when `FEEDBACK_INGEST_SERVICE_KEY` is set for trusted integrations.
 - **Limits:** `FEEDBACK_MAX_IMAGE_BYTES` (default 8MB), per-user and per-IP request windows (`FEEDBACK_INGEST_MAX_PER_USER_PER_MIN`, `FEEDBACK_INGEST_MAX_PER_IP_PER_MIN`).
 
 **Responses:** JSON `{ data: { id, imageUrl, createdAt, ... } }` on success; `4xx/5xx` with `{ error }` on failure.
@@ -137,9 +137,9 @@ Indexes support listing by user/time and **pending export** (rows with `exported
 
 Training in this repo uses `**torchvision.datasets.folder`–style trees**: the directory you pass as `--data-dir` is a single **ImageFolder root** whose **immediate subdirectories are class names**, each containing image files. That matches PlantVillage’s `**raw/color`** folder, not the parent `**raw/**` directory (which would make `color`, `grayscale`, and `segmented` look like class labels). `train.py` explicitly errors if those three names appear as classes.
 
-**AgriHome feedback export** follows the same rule: `PLANTVILLAGE_FEEDBACK_DATASET_DIR` should point to a root whose children are folders like `Tomato___Early_blight`, not an extra `color` level in between. Files are written as `<ClassFolder>/<fb-id>.<ext>` with extensions compatible with training (`train.py` uses torchvision’s image extensions).
+**Agri Monitor feedback export** follows the same rule: `PLANTVILLAGE_FEEDBACK_DATASET_DIR` should point to a root whose children are folders like `Tomato___Early_blight`, not an extra `color` level in between. Files are written as `<ClassFolder>/<fb-id>.<ext>` with extensions compatible with training (`train.py` uses torchvision’s image extensions).
 
-To **merge** user feedback with the full PlantVillage run, use the same pattern as other external sets: e.g. `--extra-dataset agrihome=/path/to/feedback-root` and an `**agrihome`** mapping in `cv-backend/dataset_label_map.json` from your on-disk folder names to canonical `Crop___Condition` names (when you use `Agrihome___...` auto folders instead of mapping UI labels to PlantVillage names in `PLANTVILLAGE_FEEDBACK_FOLDER_MAP`).
+To **merge** user feedback with the full PlantVillage run, use the same pattern as other external sets: e.g. `--extra-dataset agri-monitor=/path/to/feedback-root` and an `**agri-monitor`** mapping in `cv-backend/dataset_label_map.json` from your on-disk folder names to canonical `Crop___Condition` names (when you use `Agri Monitor___...` auto folders instead of mapping UI labels to PlantVillage names in `PLANTVILLAGE_FEEDBACK_FOLDER_MAP`).
 
 ### 5.1 Export script
 

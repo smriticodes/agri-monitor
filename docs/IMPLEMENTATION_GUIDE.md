@@ -1,8 +1,8 @@
-# AgriHome Vision Console Implementation Guide
+# Agri Monitor Vision Console Implementation Guide
 
 ## 1. Purpose
 
-This document describes what has been implemented so far in the AgriHome Vision Console, how the current system is structured, which APIs are available, and what the most important next enhancements should be.
+This document describes what has been implemented so far in the Agri Monitor Vision Console, how the current system is structured, which APIs are available, and what the most important next enhancements should be.
 
 The current application is a full-stack monitoring console for a plant-health platform: **PostgreSQL** holds core domain data, optional **Qdrant** backs similarity search, and optional HTTP services provide **tray** and **leaf** computer vision. Hardware cameras and production ML can replace simulated or derived prediction paths over time.
 
@@ -184,7 +184,7 @@ Key entities from [domain.ts](../src/lib/types/domain.ts):
 - `name`
 - `zone`
 - `crop`
-- `plantCount` (catalog count in AgriHome)
+- `plantCount` (catalog count in Agri Monitor)
 - `visionPlantCount`, `visionPlantCountAt`, `visionPlantCountConfidence`, `visionDetections` (optional; from tray CV — see `db/migrations/001_tray_vision.sql` if upgrading)
 - `healthScore`
 - `status`

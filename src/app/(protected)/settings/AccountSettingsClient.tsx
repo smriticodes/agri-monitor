@@ -55,7 +55,7 @@ export function AccountSettingsClient({
           Account
         </p>
         <p className="mt-1 text-sm text-ink/60">
-          This name is shown inside AgriHome. Your sign-in email stays the same.
+          This name is shown inside Agri Monitor. Your sign-in email stays the same.
         </p>
       </div>
 

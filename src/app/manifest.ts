@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "AgriHome Vision Console",
-    short_name: "AgriHome",
+    name: "Agri Monitor Vision Console",
+    short_name: "Agri Monitor",
     description:
       "Mobile-first tray and plant health monitoring with schedules, reports, and mesh management.",
     start_url: "/",

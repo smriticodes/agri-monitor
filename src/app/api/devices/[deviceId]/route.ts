@@ -176,7 +176,7 @@ export async function POST(request: Request, context: RouteContext) {
 
       const runPoses = Boolean(body.runPoses);
 
-      // Pi0 Take Picture: queue camera_photo for the LAN agent (agrihome.tech
+      // Pi0 Take Picture: queue camera_photo for the LAN agent (agri-monitor.tech
       // cannot reach 192.168.x camera_server URLs). Pose walks use capture_now
       // but pass cameraServerUrl so the agent captures via Pi0 /photo each stop.
       if (!runPoses && device.cameraServerUrl?.trim()) {

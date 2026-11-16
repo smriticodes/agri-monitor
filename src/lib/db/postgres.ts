@@ -3,7 +3,7 @@ import { Pool } from "pg";
 import { env, hasPostgresConfig } from "@/lib/config/env";
 
 declare global {
-  var __agrihomePostgresPool__: Pool | null | undefined;
+  var __agri-monitorPostgresPool__: Pool | null | undefined;
 }
 
 export const getPostgresPool = () => {
@@ -11,8 +11,8 @@ export const getPostgresPool = () => {
     return null;
   }
 
-  if (!globalThis.__agrihomePostgresPool__) {
-    globalThis.__agrihomePostgresPool__ = new Pool({
+  if (!globalThis.__agri-monitorPostgresPool__) {
+    globalThis.__agri-monitorPostgresPool__ = new Pool({
       host: env.postgres.host,
       port: env.postgres.port,
       user: env.postgres.user,
@@ -22,7 +22,7 @@ export const getPostgresPool = () => {
     });
   }
 
-  return globalThis.__agrihomePostgresPool__;
+  return globalThis.__agri-monitorPostgresPool__;
 };
 
 /** Throws if PostgreSQL is not configured. The app does not use in-memory mock data. */

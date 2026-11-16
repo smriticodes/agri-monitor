@@ -1,7 +1,7 @@
 /**
  * AGRI-105: advance due raspberry-pi-edge capture schedules.
  * Run via cron, e.g. every minute:
- *   * * * * * cd /path/to/agrihome && node scripts/capture-schedule-runner.cjs
+ *   * * * * * cd /path/to/agri-monitor && node scripts/capture-schedule-runner.cjs
  *
  * Enqueues capture_now commands for linked edge devices; the Pi agent
  * executes move → dwell → capture → ingest per pose.

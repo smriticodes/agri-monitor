@@ -1,4 +1,4 @@
-The Processing Layer encapsulates \textbf{model-based and computer-vision} work for AgriHome, plus \textbf{asynchronous edge capture orchestration}. It is optional in the sense that core monitoring and CRUD remain available without external models; when present, it enriches the product with species hints, tray-level detections, post-ingest disease analysis, and scheduled Pi captures aligned with the SRS's emphasis on plant health insight and automatic image capture.
+The Processing Layer encapsulates \textbf{model-based and computer-vision} work for Agri Monitor, plus \textbf{asynchronous edge capture orchestration}. It is optional in the sense that core monitoring and CRUD remain available without external models; when present, it enriches the product with species hints, tray-level detections, post-ingest disease analysis, and scheduled Pi captures aligned with the SRS's emphasis on plant health insight and automatic image capture.
 
 \subsection{Species and leaf inference adapter subsystem}
 
@@ -181,14 +181,14 @@ PR-E2 & Edge disease hook $\rightarrow$ Species adapter & Image bytes & Diagnosi
 
 \subsection{Capture schedule runner subsystem}
 
-The \textbf{capture schedule runner} (\texttt{capture:schedule-runner}) is a periodic job that evaluates due \texttt{capture\_schedules}. For destination \texttt{raspberry-pi-edge}, it enqueues \texttt{capture\_now} commands (optionally with \texttt{runPoses: true}) onto linked devices so \texttt{agrihome\_agent} performs multi-angle capture without an operator present.
+The \textbf{capture schedule runner} (\texttt{capture:schedule-runner}) is a periodic job that evaluates due \texttt{capture\_schedules}. For destination \texttt{raspberry-pi-edge}, it enqueues \texttt{capture\_now} commands (optionally with \texttt{runPoses: true}) onto linked devices so \texttt{agri\_monitor\_agent} performs multi-angle capture without an operator present.
 
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[font=\scriptsize, box/.style={draw, rounded corners, align=center, minimum width=2.4cm, minimum height=0.72cm}, arr/.style={-{Stealth}, thick}]
 \node[box, fill=orange!12] (runner) {Schedule\\runner};
 \node[box, right=1.1cm of runner, fill=gray!14] (cmd) {edge device\\commands};
-\node[box, right=1.1cm of cmd, fill=teal!12] (agent) {agrihome\_agent};
+\node[box, right=1.1cm of cmd, fill=teal!12] (agent) {agri\_monitor\_agent};
 \draw[arr] (runner) -- (cmd);
 \draw[arr] (cmd) -- node[above] {heartbeat claim} (agent);
 \end{tikzpicture}

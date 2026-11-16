@@ -432,7 +432,7 @@ export function LoginForm({
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   className="box-border h-[65px] w-full rounded-lg border-2 border-[#1a3d2e]/75 bg-[#f3fafd] px-4 pb-2 pt-7 text-lg font-semibold text-ink shadow-sm outline-none transition-[box-shadow,border-color] focus:border-moss focus:shadow-md"
-                  placeholder="grower@agrihome.local"
+                  placeholder="grower@agri-monitor.local"
                   required
                   disabled={busy}
                 />
@@ -553,7 +553,7 @@ export function LoginForm({
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   className="mt-2 w-full rounded-2xl border border-ink/10 bg-white/90 px-4 py-3 text-sm text-ink shadow-sm outline-none transition-colors focus:border-leaf focus:ring-4 focus:ring-lime/15"
-                  placeholder="grower@agrihome.local"
+                  placeholder="grower@agri-monitor.local"
                   required
                   disabled={busy}
                 />

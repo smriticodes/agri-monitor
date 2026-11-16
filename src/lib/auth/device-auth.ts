@@ -2,7 +2,7 @@ import { createHash, randomBytes, timingSafeEqual } from "crypto";
 
 import { queryRows } from "@/lib/db/postgres";
 
-export const DEVICE_API_KEY_HEADER = "x-agrihome-device-key";
+export const DEVICE_API_KEY_HEADER = "x-agri-monitor-device-key";
 
 export type EdgeDeviceStatus = "online" | "offline" | "error";
 
